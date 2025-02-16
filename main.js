@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { AnimationMixer } from 'three';
+
 
 
 // scene set up for web
@@ -29,50 +29,104 @@ const scene = new THREE.Scene();
   scene.background = new THREE.Color(color);
 }
 
-
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let cameraOrientationState = new cameraOrientationState();
 const loader = new GLTFLoader();
-const textureLoader = new THREE.TextureLoader();
-const emissionMap = textureLoader.load('./assets/motherboard_emit.jpg');
+let intersectObject = ""; 
+let hoveredObject = null;
 let mixer;
 
-loader.load( 'k.glb', function ( glb ) {
+const intersectObjects = [];
+const intersectObjectsNames =[
+  "Cresume",
+  "Cexperience",
+  "Cskills",
+  "Ctestimonials",
+  "Cwork",
+  "Cabuot_me",
+  "Ccontact_me"
+];
+
+const originalMaterials = new Map();
+const clonedMaterials = new Map();
+
+loader.load( 'see.glb', function ( glb ) {
 
 	scene.add( glb.scene );
 
   glb.scene.traverse((child) => {
-    if (child.isMesh && child.name === "motherboard") { // Apply only to "motherboard"
-      const material = new THREE.MeshStandardMaterial({
-        color: child.material.color || 0xe79ddf, 
-        emissive: child.material.emissive || 0xe79ddf,  
-        emissiveIntensity: 0.05, 
-        emissiveMap: emissionMap,
-        
-      });
-
-      child.material = material;
+    if (intersectObjectsNames.includes(child.name)){
+      intersectObjects.push(child);
     }
+
+    if (intersectObjectsNames.includes(child.name)) {
+      intersectObjects.push(child);
+
+      // Store original materials
+      if (child.isMesh) {
+        originalMaterials.set(child, child.material);
+
+        // Clone material and set initial opacity to 0
+        const clonedMaterial = child.material.clone();
+        clonedMaterial.transparent = true;
+        clonedMaterial.opacity = 0; // Start with opacity 0
+        clonedMaterial.needsUpdate = true;
+        child.material = clonedMaterial;
+
+        // Store cloned material for later use
+        clonedMaterials.set(child, clonedMaterial);
+      }}
+
   });
 
+
+//trauma
+  // const textureLoader = new THREE.TextureLoader();
+  // const emissionMap = textureLoader.load('./assets/motherboard_emit.jpg');
+
+  // if (child.isMesh && child.name === "motherboard") { 
+  //   const material = new THREE.MeshStandardMaterial({
+  //     color: child.material.color || 0xe79ddf, 
+  //     emissive: child.material.emissive || 0xe79ddf,  
+  //     emissiveIntensity: 0.05, 
+  //     emissiveMap: emissionMap,
+      
+  //   });
+  // }
 
  //Animation
+  const clips = glb.animations;
+  const start = [clips[1], clips[2], clips[3], clips[5], clips[6],
+              clips[8], clips[10], clips[11], clips[13], clips[14]];
+  const loop = [clips[0], clips[4], clips[7], clips[9], clips[12]];
   mixer = new THREE.AnimationMixer(glb.scene);
-  glb.animations.forEach(clip => {
+  let lastStartAction = null;
+    
+    start.forEach((clip, index) => {
     const action = mixer.clipAction(clip);
-    action.setLoop(THREE.LoopOnce);  
-    action.clampWhenFinished = true; 
+    action.setLoop(THREE.LoopOnce);
+    action.clampWhenFinished = true;
     action.play();
+ 
+    if (index === start.length - 1) {
+      lastStartAction = action; 
+    }
+   });
+ 
+ 
+  if (lastStartAction) {
+    lastStartAction.getMixer().addEventListener("finished", () => {
+       loop.forEach(clip => {
+         const action = mixer.clipAction(clip);
+        action.time = 50; 
+        action.setLoop(THREE.LoopRepeat, Infinity);
+        action.play();
+      });
+    });
+    } 
   });
-  action.addEventListener("finished", () =>
-  {
-    action.time = 50;
-    action.setLoop(THREE.LoopRepeat, Infinity);
-    action.play();
-  });
-}, undefined, function ( error ) {
-
-	console.error( error );
-
-} );
+  
 
 
 //Light
@@ -104,8 +158,11 @@ controls.maxPolarAngle = THREE.MathUtils.degToRad(80);
 controls.update();
 
 
+
+
+
 //Responsivness
-function handleResize(){
+function onResize(){
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
   camera.aspect = sizes.width / sizes.height;
@@ -113,16 +170,64 @@ function handleResize(){
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 }
-window.addEventListener("resize", handleResize);
 
-// Animation loop function
+
+function onPointerMove( event ) {
+	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+
+  raycaster.setFromCamera(pointer, camera);
+  const intersects = raycaster.intersectObjects(intersectObjects);
+
+  
+  if (hoveredObject) {
+    const material = clonedMaterials.get(hoveredObject);
+    if (material) {
+      material.opacity = 0; 
+      material.needsUpdate = true;
+    }
+    hoveredObject = null;
+  }
+
+  if (intersects.length > 0) {
+    hoveredObject = intersects[0].object;
+    if (hoveredObject.isMesh) {
+      const material = clonedMaterials.get(hoveredObject);
+      if (material) {
+        material.opacity = 0.7; 
+        material.needsUpdate = true;
+      }
+    }
+  }
+
+}
+
+function onClick(){
+  console.log(intersectObject);
+  
+}
+
+window.addEventListener("resize", onResize);
+window.addEventListener( 'click', onClick );
+window.addEventListener( 'pointermove', onPointerMove );
+
+
+// Animation
 function animate() {
   requestAnimationFrame(animate);
+  
+
+  raycaster.setFromCamera(pointer, camera);
+  const intersects = raycaster.intersectObjects(intersectObjects);
+
+  document.body.style.cursor = intersects.length > 0 ? 'pointer' : 'default';
 
   if (mixer) {
-    mixer.update(0.01);  
+    mixer.update(0.01);
   }
-  controls.update(); 
-  renderer.render(scene, camera); 
+  controls.update();
+  renderer.render(scene, camera);
 }
-animate();  
+
+animate();
