@@ -1,9 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nova+Square&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Special+Elite&display=swap');
+
 *{
   padding:0;
   margin: 0;
   box-sizing: border-box;
-  
+  font-family: "bebas Neue";
+  cursor:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="24" viewBox="0 0 24 24"><path fill="%23FFFFFF" stroke="%23FFFFFF" stroke-width="0.75" d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87a.5.5 0 0 0 .35-.85L6.35 2.85a.5.5 0 0 0-.85.35Z"></path></svg>'),default;
 }
+
 
 #experience {
   position: fixed;
@@ -11,6 +15,7 @@
   width:100%;
   top: 0%;
   left: 0%;
+  font-family:"Midnight Letters";
   overflow: hidden;
 }
 
@@ -19,6 +24,7 @@
   height:100%;
 }
 .modal{
+  font-family:midnight-letters;
   z-index: 999;
   position:absolute;
   top: 50%;
@@ -26,5 +32,9 @@
   transform: translate(-50%,-50%);
   width:100%;
   max-width: 700px;
-  display:none;
+  display:absolute;
+}
+
+.modal-title{
+  font-size: 3rem;
 }
