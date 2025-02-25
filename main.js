@@ -35,16 +35,13 @@ const scene = new THREE.Scene();
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const loader = new GLTFLoader();
-
 let hoveredObject = null;
-let mixer, cameraMixer;
-const clock = new THREE.Clock();
-const previousCameraPosition = new THREE.Vector3();
-const previousCameraQuaternion = new THREE.Quaternion();
-let isCameraAnimating = false;
-let animatedCamera = null;
+let mixer;
+let currentCameraAction = null;
 let clips = [];
-let cameraClips = [];
+let objectMixer;
+let cameraActions = {};
+let cameraTarget;
 
 
 const intersectObjects = [];
@@ -119,48 +116,51 @@ const objectAnimationMap = {
 //   Ccontact_me:1,
 // };
 
-loader.load( '192.glb', function ( glb ) {
+loader.load( '252.glb', function ( glb ) {
 
 	scene.add( glb.scene );
-  const clips = glb.animations;
-  cameraClips = clips.filter(c => c.name.includes('camer'));
+  objectMixer = new THREE.AnimationMixer(glb.scene);
+  clips = glb.animations;
+  console.log('ACTUAL ANIMATION NAMES:', clips.map(c => c.name));
   
-  console.log('Actual animation names:', glb.animations.map(a => a.name));
+  // Then: Find camera
   glb.scene.traverse((child) => {
+    if (child.isCamera) {
+      cameraTarget = child;
+      console.log('Camera found:', cameraTarget);
+    }
+  });
+
+  // Then: Setup mixer
   mixer = new THREE.AnimationMixer(glb.scene);
-  if (child.isCamera) animatedCamera = child;
-
-
-    if (intersectObjectsNames.includes(child.name)) {
-      intersectObjects.push(child);
-
-      // Store original materials
-      if (child.isMesh) {
-        originalMaterials.set(child, child.material);
-
-        // Clone material and set initial opacity to 0
-        const clonedMaterial = child.material.clone();
-        clonedMaterial.transparent = true;
-        clonedMaterial.opacity = 0; // Start with opacity 0
-        clonedMaterial.needsUpdate = true;
-        child.material = clonedMaterial;
-
-        // Store cloned material for later use
-        clonedMaterials.set(child, clonedMaterial);
-      }}
+  
+  // Then: Map actions
+  clips.forEach(clip => {
+    cameraActions[clip.name] = mixer.clipAction(clip);
+  });
+  
+    //hover thing
+    glb.scene.traverse((child) => {
+      if (intersectObjectsNames.includes(child.name)) {
+        intersectObjects.push(child);
+        if (child.isMesh) {
+          originalMaterials.set(child, child.material);
+          const clonedMaterial = child.material.clone();
+          clonedMaterial.transparent = true;
+          clonedMaterial.opacity = 0; 
+          clonedMaterial.needsUpdate = true;
+          child.material = clonedMaterial;
+          clonedMaterials.set(child, clonedMaterial);
+        }}});
 
 //Animation
-
-
 const start = [clips[7],clips[8],
 clips[10], clips[11],
 clips[13], clips[15],
 clips[16],clips[18],
 clips[19]
 ];
-
 const loop = [clips[9], clips[12], clips[14],clips[17]];
-
 
 let lastStartAction = null;
 
@@ -184,12 +184,12 @@ action.time = 50;
 action.setLoop(THREE.LoopRepeat, Infinity);
 action.play();
 });
-});
-} 
-});
-
-
   });
+    } 
+    cameraTarget.updateMatrixWorld(true);
+  cameraTarget.matrixAutoUpdate = true;
+      });
+        
 
 
 
@@ -215,21 +215,21 @@ let mouseX = 0;
 let mouseY = 0;
 
 
-const xButton = document.getElementById('XButton');
-const Resume = document.getElementById('Resume');
-if (xButton) {
-  xButton.addEventListener('click', () => {
-    xButton.onclick = function(){
-      Resume.style.display = "none";
-      console.log("tf");
-    }
-    if (isCameraAnimating) return;
-    camera.position.copy(previousCameraPosition);
-    camera.quaternion.copy(previousCameraQuaternion);
+// const xButton = document.getElementById('XButton');
+// const Resume = document.getElementById('Resume');
+// if (xButton) {
+//   xButton.addEventListener('click', () => {
+//     xButton.onclick = function(){
+//       Resume.style.display = "none";
+//       console.log("tf");
+//     }
+//     if (isCameraAnimating) return;
+//     camera.position.copy(previousCameraPosition);
+//     camera.quaternion.copy(previousCameraQuaternion);
     
-    console.log("exit");
-  });
-}
+//     console.log("exit");
+//   });
+// }
  
 
 
@@ -290,8 +290,55 @@ function onClick(){
     const objectName = intersects[0].object.name;
     console.log("object clicked",objectName);
     
+    const animationName = objectAnimationMap[objectName];
+    if (animationName) {
+      playCameraAnimation(animationName);
+    }
   }
 }
+
+
+
+function playCameraAnimation(animationName) {
+  if (!mixer || !cameraActions[animationName]) {
+    console.error('Animation not ready:', animationName);
+    return;
+  }
+
+  // Stop only camera animations
+  Object.values(cameraActions).forEach(action => {
+    if (action.isRunning()) action.stop();
+  });
+
+  const action = cameraActions[animationName];
+  action.reset()
+    .setEffectiveTimeScale(1)
+    .setLoop(THREE.LoopOnce)
+    .clampWhenFinished = true;
+
+  // Force camera updates
+  action.play();
+  action.paused = false;
+  
+  // Direct sync during animation
+  const animateCamera = () => {
+    camera.position.copy(cameraTarget.position);
+    camera.rotation.copy(cameraTarget.rotation);
+    if (action.isRunning()) requestAnimationFrame(animateCamera);
+  };
+  console.log('Animation duration:', action.getClip().duration);
+  console.log('Camera target before:', cameraTarget.position);
+  action.play();
+  console.log('Camera target after:', cameraTarget.position);
+  
+  // ADD THIS DEBUGGER:
+  setTimeout(() => {
+    console.log('10s later - Camera target:', cameraTarget.position);
+    console.log('Animation running:', action.isRunning());
+  }, 10000);
+  animateCamera();
+}
+
 
 window.addEventListener("resize", onResize);
 window.addEventListener( 'click', onClick );
@@ -328,11 +375,26 @@ if (debugMobile) isMobile = true;
 mobileControls();
 
 
-
+const clock = new THREE.Clock();
 // Animation
 function animate() {
+  const delta = clock.getDelta();
   requestAnimationFrame(animate);
+
+  if (mixer) mixer.update(delta); 
+  if (objectMixer) objectMixer.update(delta);
   
+  if (cameraTarget) {
+    cameraTarget.updateMatrixWorld(true);
+    camera.position.copy(cameraTarget.position);
+    camera.rotation.copy(cameraTarget.rotation);
+    camera.updateProjectionMatrix();
+  }
+  else {
+    camera.position.x += (mouseX - camera.position.x) * 0.25;
+    camera.position.y += (-mouseY - camera.position.y) * 0.25;
+    camera.lookAt(scene.position);
+  }
 
   if (isMobile && controls){
       controls.update();
@@ -347,9 +409,7 @@ function animate() {
 
   document.body.style.cursor = intersects.length > 0 ? 'pointer' : 'default';
   
-  if (mixer) {
-    mixer.update(0.01);
-  }
+  
   renderer.render(scene, camera);
 }
 

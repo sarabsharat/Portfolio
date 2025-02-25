@@ -37,7 +37,7 @@
   transform: translate(-50%,-50%);
   width:100%;
   max-width: 700px;
-  display:absolute;
+  display:none;
 }
 
 .modal-title{
