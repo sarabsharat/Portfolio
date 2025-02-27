@@ -36,7 +36,6 @@ let hoveredObject = null;
 let mixer;
 let clips = [];
 let objectMixer;
-let cameraTarget;
 let isAnimating = false;
 const cameraOffset = new THREE.Vector3(-17.941, 17.759, -18.720);
 const mouseInfluence = 0.25;
@@ -55,7 +54,7 @@ const intersectObjectsNames =[
 const cameraTargets = {
   Cresume: {
     position: new THREE.Vector3(0.52, 0.15, -5.48), 
-    rotation: new THREE.Euler(0, 0, 0)
+    rotation: new THREE.Euler(0, Math.PI/2,0)
   },
   Cexperience: {
     position: new THREE.Vector3(-5.57, 0.15, 0.53),
@@ -78,7 +77,7 @@ const cameraTargets = {
       },
   Cabuot_me:{
     position: new THREE.Vector3(6.557510852813721, 0.1496729850769043, 0.5195545554161072),
-    rotation: new THREE.Euler(0, 0, 0),
+    rotation: new THREE.Euler(0, Math.PI/2, 0),
         
       },
   Ccontact_me:{
@@ -89,9 +88,18 @@ const cameraTargets = {
 };
 const originalMaterials = new Map();
 const clonedMaterials = new Map();
-const MIN_DISTANCE = 10; // Minimum allowed distance from objects
-const ROTATION_SPEED = 0.3; 
-
+const MIN_DISTANCE = 15; 
+const ROTATION_SPEED = 0.4; 
+const Rbutton = document.getElementById('return');
+let startPosition = null; 
+let startRotation = null;
+let currentTarget = null;
+let initialCameraState = {
+  position: new THREE.Vector3(),
+  rotation: new THREE.Euler()
+};
+initialCameraState.position.copy(camera.position);
+initialCameraState.rotation.copy(camera.rotation);
 
 //#endregion
 
@@ -117,7 +125,7 @@ loader.load( '252.glb', function ( glb ) {
           clonedMaterials.set(child, clonedMaterial);
         }}});
 
-//Animation
+//#region Animation
 const start = [clips[7],clips[8],
 clips[10], clips[11],
 clips[13], clips[15],
@@ -150,38 +158,40 @@ action.play();
 });
   });
     } 
-    cameraTarget.updateMatrixWorld(true);
-  cameraTarget.matrixAutoUpdate = true;
+//#endregion
       });
-
-     
-      function moveCameraTo(targetName) {
-        isAnimating = true;
       
-        // 1. Get object and its world position
+      
+      function moveCameraTo(targetName) {
+        if(isAnimating) return;
+        
+        isAnimating = true;
+        currentTarget = targetName;
+      
         const targetObject = intersectObjects.find(obj => obj.name === targetName);
         const objectPosition = new THREE.Vector3();
         targetObject.getWorldPosition(objectPosition);
       
-        // 2. Calculate ideal camera position
+        // Store starting position/rotation BEFORE movement
+        startPosition = camera.position.clone();
+        startRotation = camera.rotation.clone();
+      
         const cameraDirection = new THREE.Vector3()
           .subVectors(camera.position, objectPosition)
           .normalize();
-        
+      
         const targetPosition = cameraDirection
           .multiplyScalar(MIN_DISTANCE)
           .add(objectPosition);
       
-        // 3. Calculate rotated position (slight orbit)
         const rotatedPosition = targetPosition.clone().applyAxisAngle(
-          new THREE.Vector3(0, 1, 0), // Rotate around Y axis
-          THREE.MathUtils.degToRad(30 * ROTATION_SPEED) // 30 degree arc
+          new THREE.Vector3(0, Math.PI/2, 0),
+          THREE.MathUtils.degToRad(45 * ROTATION_SPEED)
         );
       
-        // 4. Create smooth animation
         new TWEEN.Tween({
           posX: camera.position.x,
-          posY: camera.position.y, 
+          posY: camera.position.y,
           posZ: camera.position.z,
           rotX: camera.rotation.x,
           rotY: camera.rotation.y
@@ -190,36 +200,78 @@ action.play();
           posX: rotatedPosition.x,
           posY: rotatedPosition.y,
           posZ: rotatedPosition.z,
-          rotY: camera.rotation.y + THREE.MathUtils.degToRad(30 * ROTATION_SPEED)
-        }, 2000)
+          rotY: camera.rotation.y + THREE.MathUtils.degToRad(70 * ROTATION_SPEED),
+          rotX: camera.rotation.x + THREE.MathUtils.degToRad(70 * ROTATION_SPEED)
+        }, 1500)
         .easing(TWEEN.Easing.Quadratic.InOut)
         .onUpdate((obj) => {
           camera.position.set(obj.posX, obj.posY, obj.posZ);
           camera.rotation.set(obj.rotX, obj.rotY, camera.rotation.z);
-          camera.lookAt(objectPosition); // Maintain focus on object
+          camera.lookAt(objectPosition);
         })
         .onComplete(() => {
-          isAnimating = false;
+          if(Rbutton) Rbutton.style.display = 'block';
         })
         .start();
       }
 
+      function returnToInitial() {
+        if(!isAnimating && currentTarget) {
+          isAnimating = true;
+          
+          new TWEEN.Tween({
+            posX: camera.position.x,
+            posY: camera.position.y,
+            posZ: camera.position.z,
+            rotX: camera.rotation.x,
+            rotY: camera.rotation.y
+          })
+          .to({
+            posX: initialCameraState.position.x,
+            posY: initialCameraState.position.y,
+            posZ: initialCameraState.position.z,
+            rotX: initialCameraState.rotation.x,
+            rotY: initialCameraState.rotation.y
+          }, 1500)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .onUpdate((obj) => {
+            camera.position.set(obj.posX, obj.posY, obj.posZ);
+            camera.rotation.set(obj.rotX, obj.rotY, camera.rotation.z);
+            camera.lookAt(scene.position); // Add this line
+          })
+          .onComplete(() => {
+            isAnimating = false;
+            currentTarget = null;
+            if(Rbutton) Rbutton.style.display = 'none';
+          })
+          .start();
+        }
+      }
+document.addEventListener('DOMContentLoaded', () => {
+  if(Rbutton) {
+    Rbutton.style.display = 'none';
+    Rbutton.addEventListener('click', returnToInitial);
+  }
+});
+
+
+
 //#region Camera && Light
-//Light
+    //Light
 const directionalLight = new THREE.DirectionalLight( 0x404040, 50 );
 directionalLight.position.set( -15.686, 8.580, -6.977 );
 directionalLight.castShadow = true;
 scene.add( directionalLight );
 
-//Camera position and rotation 
-camera.position.set(-17.941, 17.759, -18.720);
-camera.rotation.set(
-  THREE.MathUtils.degToRad(-135.84),  
-  THREE.MathUtils.degToRad(-35.16),   
-  THREE.MathUtils.degToRad(-151.63)   
-);
-camera.fov = 25.64;
-camera.updateProjectionMatrix();
+    //Camera position and rotation 
+    camera.position.set(-17.941, 17.759, -18.720);
+    camera.rotation.set(
+      THREE.MathUtils.degToRad(-135.84),  
+      THREE.MathUtils.degToRad(-35.16),   
+      THREE.MathUtils.degToRad(-151.63)   
+    );
+    camera.fov = 25.64;
+    camera.updateProjectionMatrix();
 //#endregion
 
 // const xButton = document.getElementById('XButton');
@@ -284,13 +336,6 @@ function onMouseMove( event ) {
           }
         }
       }
-      const zoomFactor = THREE.MathUtils.clamp(
-        cameraOffset.z + (mouseY * ZOOM_CONFIG.sensitivity),
-        ZOOM_CONFIG.minZoom,
-        ZOOM_CONFIG.maxZoom
-      );
-      camera.position.z = zoomFactor;
-
 }
 
 function onClick(){
@@ -299,6 +344,7 @@ function onClick(){
   if (intersects.length > 0) {
     const objectName = intersects[0].object.name;
     moveCameraTo(objectName);
+    Rbutton.style.display = "inline";
     }
   }
 
@@ -338,7 +384,6 @@ function mobileControls (){
 const debugMobile = new URLSearchParams(window.location.search).has('mobile');
 if (debugMobile) isMobile = true;
 mobileControls();
-
 
 
 // Animation
