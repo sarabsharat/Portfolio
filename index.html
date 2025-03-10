@@ -4,8 +4,11 @@
   
   <!-- React and ReactDOM from CDN -->
 <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=cancel" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=download_done" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=download" />
 <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
@@ -16,22 +19,158 @@
   <div id="experience">
     <canvas id="experience-canvas"></canvas>
   </div>
+
   <div class="return" >
   <button class="Rbutton" id="return">Return</button></div>
-    <div class="modal" id="Resume">
+
+
+    <div class="modal" id="Cresume-modal">
       <div class="modal-wrapper">
-        <div class="modal-header">
-            <button class="material-symbols-outlined" id ="XButton">
-              cancel
-            </button>
+        <div class="modal-header">Resume
         </div>
         <div class="modal-content">
-          <div class="modal-title">Resume
-          <div class="modal-description"></div>
+          <div class="modal-title">Download My CV here!
+          <div class="modal-description"><a class="material-symbols-outlined" href="/SaraIbsharat-CV.pdf"  download alt="download">
+            download</a>
+            </div>
           <div class="modal-extra"></div>
         </div>
       </div>
     </div>
+    </div>
+
+
+    <div class="modal" id="Cexperience-modal">
+      <div class="modal-wrapper">
+        <div class="modalE-header">Work
+        </div>
+        <div class="modal-content">
+          <div class="modal-title">Download My CV here!
+          <div class="modal-description"><a class="material-symbols-outlined" href="/SaraIbsharat-CV.pdf"  download alt="download">
+            download</a>
+            </div>
+          <div class="modal-extra"></div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="modal" id="Cskills-modal">
+      <div class="modal-wrapper">
+        <div class="modal-header">Skills
+        </div>
+        <div class="modal-content">
+          <div class="modal-title">What I learned to use in my journey 🧭<br>
+            <div class="container">
+
+              <!-- HTML -->
+              <div class="skill-item" data-tooltip="HTML5">
+                <div class="skill-icon">
+                  <img src="/Icons/html-5-logo.svg"/>
+                </div>
+              </div>
+
+              <!-- CSS3 -->
+              <div class="skill-item" data-tooltip="CSS">
+                <div class="skill-icon">
+                  <img src="/Icons/css3.svg"/>
+                  </div>
+              </div>
+            
+              <!-- Python -->
+               <div class="skill-item" data-tooltip="Python">
+            <div class="skill-icon">
+              <img src="/Icons/logo-python.svg"/>
+            </div>
+          </div>
+          <!-- Pandas -->
+          <div class="skill-item" data-tooltip="Pandas">
+            <div class="skill-icon">
+              <img src="/Icons/pandas.svg"/>
+            </div>
+          </div>
+           <!-- Numpy -->
+           <div class="skill-item" data-tooltip="Numpy">
+            <div class="skill-icon">
+              <img src="/Icons/numpy.svg"/>
+            </div>
+          </div>
+              <!-- Blender -->
+              <div class="skill-item blender" data-tooltip="Blender">
+                <div class="skill-icon">
+                  <img src="/Icons/blender-software.svg"/>
+                  </div>
+              </div>
+              <!-- Adobe AE -->
+              <div class="skill-item blender" data-tooltip="Adobe Ae">
+                <div class="skill-icon">
+                  <img src="/Icons/adobe-after-effects.svg"/>
+                  </div>
+              </div>
+              <!-- Adobe AI -->
+              <div class="skill-item" data-tooltip="Adobe Ai">
+                <div class="skill-icon">
+                  <img src="/Icons/adobe-illustrator.svg"/>
+                </div>
+              </div>
+              <!-- Adobe Ch -->
+              <div class="skill-item" data-tooltip="Adobe Ch">
+                <div class="skill-icon">
+                  <img src="/Icons/Adobe_Character_Animator_icon_(2020) (1).svg"/>
+                </div>
+              </div>
+            </div>
+        </div>
+      
+        </div>
+
+      </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="Ctestimonials-modal">
+      
+    </div>
+
+    <div class="modal" id="Cwork-modal">
+      <div class="image-content">
+        <div class="image-container">
+          <div class="images">
+            <div class="View" data-grid="-"></div>
+            <div class="NXGEN AG" data-grid="img-1"></div>
+            <div class="MUN" data-grid="img-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="modal" id="Cabuot_me-modal">
+    </div>
+
+    <div class="modal" id="Ccontact_me-modal">
+      <div class="modal-wrapper">
+        <div class="modal-header">Contact Me!
+        </div>
+        <div class="modal-content">
+          <div class="modal-title">Let's Get In Touch!👋<br>
+            <div class="container">
+              <div class="box linkedin" href = "https://www.linkedin.com/in/sara-ibsharat-a8124b163/" data-tooltip="Linkedin"><div><a href="https://www.linkedin.com/in/sara-ibsharat-a8124b163/"><i class="fa-brands fa-linkedin"></i></a></div>
+        </div>
+        <div class="box github" data-tooltip="Github" href=" https://github.com/sarabsharat"><div><a href="https://github.com/sarabsharat" ><i class="fa-brands fa-github"></i></a></div>
+        </div>
+        <div class="box mail" data-tooltip="Mail"><div><a href="mailto:sarabsharat.sb@gmail.com"><i class="fa-solid fa-at"></i></a></div>
+        </div>
+        </div>
+
+      </div>
+        </div>
+      </div>
+    </div>
+
+
+
     </div>
 <div class="footer">&copy; All rights reserved - sarabsharat </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>

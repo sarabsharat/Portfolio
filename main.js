@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
 
 
+
 // scene set up for web
 const canvas = document.getElementById("experience-canvas");
 const sizes = {
@@ -92,7 +93,6 @@ const MIN_DISTANCE = 15;
 const ROTATION_SPEED = 0.4; 
 const Rbutton = document.getElementById('return');
 let startPosition = null; 
-let startRotation = null;
 let currentTarget = null;
 let initialCameraState = {
   position: new THREE.Vector3(),
@@ -100,13 +100,20 @@ let initialCameraState = {
 };
 initialCameraState.position.copy(camera.position);
 initialCameraState.rotation.copy(camera.rotation);
+let animationTargetPosition = new THREE.Vector3();
+let returnLookAtTarget = new THREE.Vector3();
+let interactionEnabled = true; 
+const modalTimelines = new Map();
+let modalTimeout = null;
+let currentModal = null;
 
 //#endregion
 
 
 loader.load( '252.glb', function ( glb ) {
-
-	scene.add( glb.scene );
+  scene.add( glb.scene );
+  renderer.domElement.style.zIndex = 0; // Keep canvas behind modals
+renderer.domElement.style.pointerEvents = 'auto';
   objectMixer = new THREE.AnimationMixer(glb.scene);
   clips = glb.animations;
   mixer = new THREE.AnimationMixer(glb.scene);
@@ -160,93 +167,236 @@ action.play();
     } 
 //#endregion
       });
+
       
+//#region HTML ANIMATIONS
+function showModal(modal) {
+        if (!modal) return;
       
-      function moveCameraTo(targetName) {
-        if(isAnimating) return;
+        // Clear any existing timeouts
+        if (modalTimeout) clearTimeout(modalTimeout);
+      
+        modalTimeout = setTimeout(() => {
+          if (modal && currentTarget) { // Only show if still on target
+            modal.style.display = 'block';
+            gsap.fromTo(modal,
+              { opacity: 0, y: 20 },
+              { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
+            );
+          }
+        }, 700); 
+      
+        currentModal = modal;
         
-        isAnimating = true;
-        currentTarget = targetName;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  // Generic function for all icons
+  function setupIconAnimation(selector) {
+    const box = document.querySelector(selector);
+    if (!box) return;
+
+    const icon = box.querySelector('i');
+    let animation = gsap.to(icon, {
+      rotation: 360,
+      duration: 0.8,
+      ease: "power2.inOut",
+      paused: true,
+      transformOrigin: "center center"
+    });
+
+    box.addEventListener('mouseenter', () => {
+      if (!animation.isActive()) {
+        animation.play();
+      }
+    });
+
+    box.addEventListener('mouseleave', () => {
+      if (animation.isActive()) {
+        animation.reverse();
+      } else {
+        animation.progress(0).reverse(); // Reset to start position
+      }
+    });
+  }
+
+  // Initialize all icons
+  setupIconAnimation('.box.linkedin');
+  setupIconAnimation('.box.github');
+  setupIconAnimation('.box.mail');
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const mailBox = document.querySelector('.box.mail');
+  const mailIcon = mailBox.querySelector('i');
+
+  // Set initial rotation state
+  gsap.set(mailIcon, {
+    rotation: 0,
+    transformOrigin: "center center"
+  });
+
+  // Create smooth spin animation
+  const mailTimeline = gsap.timeline({ paused: true })
+    .to(mailIcon, {
+      rotation: 360,
+      duration: 0.8,
+      ease: "power2.inOut",
+      immediateRender: false
+    });
+
+  mailBox.addEventListener('mouseenter', () => {
+    mailTimeline.play();
+  });
+
+  mailBox.addEventListener('mouseleave', () => {
+    mailTimeline.reverse();
+  });
+});
+
+
+
+
+
+
+
+
+
+
+//#endregion
       
-        const targetObject = intersectObjects.find(obj => obj.name === targetName);
-        const objectPosition = new THREE.Vector3();
-        targetObject.getWorldPosition(objectPosition);
-      
-        // Store starting position/rotation BEFORE movement
-        startPosition = camera.position.clone();
-        startRotation = camera.rotation.clone();
-      
-        const cameraDirection = new THREE.Vector3()
-          .subVectors(camera.position, objectPosition)
+//#region zoom animation
+function moveCameraTo(targetName) {
+      if(isAnimating) return;
+        
+      renderer.domElement.style.pointerEvents = 'none';
+       // Cancel any pending modal from previous clicks
+  if (modalTimeout) clearTimeout(modalTimeout);
+  currentModal = null;
+
+  // Hide existing modals immediately
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.style.display = 'none';
+    gsap.killTweensOf(modal); // Stop any active animations
+  });
+
+  // Start camera animation
+  // ... your existing camera code ...
+
+  // Queue modal appearance
+  const modal = document.getElementById(`${targetName}-modal`);
+  showModal(modal);
+
+      isAnimating = true;
+      currentTarget = targetName;
+    
+      const targetObject = intersectObjects.find(obj => obj.name === targetName);
+      targetObject.getWorldPosition(animationTargetPosition);
+      returnLookAtTarget.copy(animationTargetPosition);
+
+      const startLookAt = new THREE.Vector3().copy(scene.position); 
+      const targetLookAt = animationTargetPosition.clone(); 
+      startPosition = camera.position.clone();
+    
+      const cameraDirection = new THREE.Vector3()
+          .subVectors(camera.position, animationTargetPosition)
           .normalize();
-      
-        const targetPosition = cameraDirection
+    
+      const targetPosition = cameraDirection
           .multiplyScalar(MIN_DISTANCE)
-          .add(objectPosition);
-      
-        const rotatedPosition = targetPosition.clone().applyAxisAngle(
+          .add(animationTargetPosition);
+    
+      const rotatedPosition = targetPosition.clone().applyAxisAngle(
           new THREE.Vector3(0, Math.PI/2, 0),
           THREE.MathUtils.degToRad(45 * ROTATION_SPEED)
-        );
-      
-        new TWEEN.Tween({
+    );
+    
+      new TWEEN.Tween({
           posX: camera.position.x,
           posY: camera.position.y,
           posZ: camera.position.z,
-          rotX: camera.rotation.x,
-          rotY: camera.rotation.y
-        })
-        .to({
+          lookX: startLookAt.x, 
+          lookY: startLookAt.y,
+          lookZ: startLookAt.z
+    })
+      .to({
           posX: rotatedPosition.x,
           posY: rotatedPosition.y,
           posZ: rotatedPosition.z,
-          rotY: camera.rotation.y + THREE.MathUtils.degToRad(70 * ROTATION_SPEED),
-          rotX: camera.rotation.x + THREE.MathUtils.degToRad(70 * ROTATION_SPEED)
-        }, 1500)
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .onUpdate((obj) => {
+          lookX: targetLookAt.x, 
+          lookY: targetLookAt.y,
+          lookZ: targetLookAt.z
+    }, 1500)
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .onUpdate((obj) => {
           camera.position.set(obj.posX, obj.posY, obj.posZ);
-          camera.rotation.set(obj.rotX, obj.rotY, camera.rotation.z);
-          camera.lookAt(objectPosition);
-        })
-        .onComplete(() => {
-          if(Rbutton) Rbutton.style.display = 'block';
-        })
-        .start();
-      }
+          camera.lookAt(new THREE.Vector3(obj.lookX, obj.lookY, obj.lookZ));
+       })
+       .onComplete(() => {
+        isAnimating = false;
+        if(Rbutton) Rbutton.style.display = 'block';
+        interactionEnabled = true; // Re-enable after animation
+      })
+      .start();
+    }
+    
 
-      function returnToInitial() {
-        if(!isAnimating && currentTarget) {
-          isAnimating = true;
-          
-          new TWEEN.Tween({
-            posX: camera.position.x,
-            posY: camera.position.y,
-            posZ: camera.position.z,
-            rotX: camera.rotation.x,
-            rotY: camera.rotation.y
-          })
-          .to({
-            posX: initialCameraState.position.x,
-            posY: initialCameraState.position.y,
-            posZ: initialCameraState.position.z,
-            rotX: initialCameraState.rotation.x,
-            rotY: initialCameraState.rotation.y
-          }, 1500)
-          .easing(TWEEN.Easing.Quadratic.InOut)
-          .onUpdate((obj) => {
-            camera.position.set(obj.posX, obj.posY, obj.posZ);
-            camera.rotation.set(obj.rotX, obj.rotY, camera.rotation.z);
-            camera.lookAt(scene.position); // Add this line
-          })
-          .onComplete(() => {
-            isAnimating = false;
-            currentTarget = null;
-            if(Rbutton) Rbutton.style.display = 'none';
-          })
-          .start();
-        }
+    
+function returnToInitial() {
+  if (!isAnimating && currentTarget) {
+  isAnimating = true;
+  renderer.domElement.style.pointerEvents = 'auto';
+  if (modalTimeout) {
+    clearTimeout(modalTimeout);
+    modalTimeout = null;
+  }
+  
+  // Hide current modal immediately
+  document.querySelectorAll('.modal').forEach(modal => {
+    gsap.to(modal, {
+      opacity: 0,
+      duration: 0.2,
+      onComplete: () => {
+        modal.style.display = 'none';
       }
+    });
+  });
+
+  const startLookAt = returnLookAtTarget.clone();
+  const endLookAt = scene.position.clone(); // Scene center
+  new TWEEN.Tween({
+posX: camera.position.x,
+posY: camera.position.y,
+posZ: camera.position.z,
+lookX: startLookAt.x, // New: Track lookAt target
+lookY: startLookAt.y,
+lookZ: startLookAt.z
+})
+  .to({
+posX: startPosition.x,
+            posY: startPosition.y,
+
+
+            posZ: startPosition.z,
+
+
+lookX: endLookAt.x, // Tween lookAt to scene center
+lookY: endLookAt.y,
+lookZ: endLookAt.z
+}, 1500)
+.easing(TWEEN.Easing.Quadratic.InOut)
+.onUpdate((obj) => {
+camera.position.set(obj.posX, obj.posY, obj.posZ);
+camera.lookAt(new THREE.Vector3(obj.lookX, obj.lookY, obj.lookZ));
+})
+  .onComplete(() => {
+  isAnimating = false;
+  currentTarget = null;
+  interactionEnabled = true; // Re-enable interactions
+  if(Rbutton) Rbutton.style.display = 'none';
+})
+     .start();
+      }
+    }
 document.addEventListener('DOMContentLoaded', () => {
   if(Rbutton) {
     Rbutton.style.display = 'none';
@@ -254,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
+//#endregion
 
 //#region Camera && Light
     //Light
@@ -274,24 +424,9 @@ scene.add( directionalLight );
     camera.updateProjectionMatrix();
 //#endregion
 
-// const xButton = document.getElementById('XButton');
-// const Resume = document.getElementById('Resume');
-// if (xButton) {
-//   xButton.addEventListener('click', () => {
-//     xButton.onclick = function(){
-//       Resume.style.display = "none";
-//       console.log("tf");
-//     }
-//     if (isCameraAnimating) return;
-//     camera.position.copy(previousCameraPosition);
-//     camera.quaternion.copy(previousCameraQuaternion);
-    
-//     console.log("exit");
-//   });
-// }
- 
-//Responsivness
+//#region HANDLERS 
 
+//Responsivness
 function onResize(){
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
@@ -338,15 +473,19 @@ function onMouseMove( event ) {
       }
 }
 
-function onClick(){
+function onClick() {
+  if (!interactionEnabled || isAnimating || currentTarget) return;
+
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(intersectObjects);
+  
   if (intersects.length > 0) {
+    interactionEnabled = false; // Disable further clicks
     const objectName = intersects[0].object.name;
     moveCameraTo(objectName);
     Rbutton.style.display = "inline";
-    }
   }
+}
 
 
 
@@ -385,8 +524,9 @@ const debugMobile = new URLSearchParams(window.location.search).has('mobile');
 if (debugMobile) isMobile = true;
 mobileControls();
 
+//#endregion 
 
-// Animation
+// render
 const clock = new THREE.Clock();
 function animate() {
   TWEEN.update();
@@ -398,10 +538,12 @@ function animate() {
 
   // Only follow cursor when NOT animating
   if (!isAnimating && !isMobile) {
-    camera.position.copy(cameraOffset);
-    camera.position.x += (mouseX - cameraOffset.x) * mouseInfluence;
-    camera.position.y += (-mouseY - cameraOffset.y) * mouseInfluence;
-    camera.lookAt(scene.position);
+    if (!currentTarget) {
+      camera.position.copy(cameraOffset);
+      camera.position.x += (mouseX - cameraOffset.x) * mouseInfluence;
+      camera.position.y += (-mouseY - cameraOffset.y) * mouseInfluence;
+      camera.lookAt(scene.position);
+    }
   }
 
   // Mobile controls check
