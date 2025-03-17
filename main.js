@@ -171,22 +171,69 @@ action.play();
       
 //#region HTML ANIMATIONS
 function showModal(modal) {
-        if (!modal) return;
-      
-        // Clear any existing timeouts
-        if (modalTimeout) clearTimeout(modalTimeout);
-      
-        modalTimeout = setTimeout(() => {
-          if (modal && currentTarget) { // Only show if still on target
-            modal.style.display = 'block';
-            gsap.fromTo(modal,
-              { opacity: 0, y: 20 },
-              { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
-            );
-          }
-        }, 700); 
-      
-        currentModal = modal;
+  if (!modal) return;
+
+  // Clear existing timeouts and animations
+  if (modalTimeout) clearTimeout(modalTimeout);
+  gsap.killTweensOf(modal);
+  gsap.killTweensOf(".A p");
+  
+  modalTimeout = setTimeout(() => {
+    if (modal && currentTarget) {
+      // Modal animation
+      gsap.fromTo(modal, {
+        opacity: 0,
+        y: 10,
+        scale: 0.98
+      }, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.4,
+        ease: "expo.out",
+        onStart: () => {
+          modal.style.display = 'block';
+        }
+      });
+  
+      document.addEventListener("DOMContentLoaded", () => {
+    
+
+    gsap.utils.toArray(".modalA section").forEach(section => {
+        gsap.fromTo(section, 
+            { opacity: 0, y: 50 }, 
+            { 
+                opacity: 1, 
+                y: 0, 
+                duration: 1, 
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 80%", // Adjust when animation starts
+                    end: "top 50%", 
+                    toggleActions: "play none none reverse" 
+                }
+            }
+        );
+    });
+});
+      // Text animation
+      gsap.fromTo(".A p", {
+        opacity: 0,
+        y: 20,
+      }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        delay: 0.2, // Stagger after modal
+        ease: "sine.out",
+        onStart: () => {
+        }
+      });
+    }
+  }, 500); // Reduced delay
+  
+  currentModal = modal;
         
 }
 document.addEventListener('DOMContentLoaded', function() {
@@ -224,42 +271,6 @@ document.addEventListener('DOMContentLoaded', function() {
   setupIconAnimation('.box.github');
   setupIconAnimation('.box.mail');
 });
-
-document.addEventListener('DOMContentLoaded', function() {
-  const mailBox = document.querySelector('.box.mail');
-  const mailIcon = mailBox.querySelector('i');
-
-  // Set initial rotation state
-  gsap.set(mailIcon, {
-    rotation: 0,
-    transformOrigin: "center center"
-  });
-
-  // Create smooth spin animation
-  const mailTimeline = gsap.timeline({ paused: true })
-    .to(mailIcon, {
-      rotation: 360,
-      duration: 0.8,
-      ease: "power2.inOut",
-      immediateRender: false
-    });
-
-  mailBox.addEventListener('mouseenter', () => {
-    mailTimeline.play();
-  });
-
-  mailBox.addEventListener('mouseleave', () => {
-    mailTimeline.reverse();
-  });
-});
-
-
-
-
-
-
-
-
 
 
 //#endregion
@@ -310,6 +321,7 @@ function moveCameraTo(targetName) {
           THREE.MathUtils.degToRad(45 * ROTATION_SPEED)
     );
     
+    
       new TWEEN.Tween({
           posX: camera.position.x,
           posY: camera.position.y,
@@ -331,6 +343,7 @@ function moveCameraTo(targetName) {
           camera.position.set(obj.posX, obj.posY, obj.posZ);
           camera.lookAt(new THREE.Vector3(obj.lookX, obj.lookY, obj.lookZ));
        })
+       
        .onComplete(() => {
         isAnimating = false;
         if(Rbutton) Rbutton.style.display = 'block';
@@ -352,6 +365,15 @@ function returnToInitial() {
   
   // Hide current modal immediately
   document.querySelectorAll('.modal').forEach(modal => {
+    gsap.to(modal, {
+      opacity: 0,
+      duration: 0.2,
+      onComplete: () => {
+        modal.style.display = 'none';
+      }
+    });
+  });
+  document.querySelectorAll('.modalA').forEach(modal => {
     gsap.to(modal, {
       opacity: 0,
       duration: 0.2,
@@ -435,9 +457,7 @@ function onResize(){
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  if (controls){
-    controls.handleResize();
-  }
+  // No need to call handleResize as OrbitControls does not have this method
 }
 
 function onMouseMove( event ) {

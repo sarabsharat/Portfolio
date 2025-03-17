@@ -45,7 +45,7 @@ button, a, .clickable {
   transform: translate(-50%,-50%) !important;
   width:100%;
   max-width: 700px;
-  z-index: 100;
+  
   display: none;
   padding: 50px;
   border-radius: 16px;
@@ -55,6 +55,111 @@ button, a, .clickable {
   will-change: transform, opacity; /* Optimize animations */
   pointer-events: none; /* Disable interaction when hidden */
 }
+
+.modalA {
+  font-family:"MidnightLetters";
+  z-index: 999;
+  position:fixed;
+  background-color: #0a1027;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%,-50%) !important;
+  width:100vw !important;
+  height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 16px;
+  box-shadow: 7px 7px 100px #07070e;
+  opacity: 0; /* Start hidden */
+  transform: translateY(20px);
+  will-change: transform, opacity; /* Optimize animations */
+  pointer-events: auto; 
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+
+
+.modalA section{
+  font-size: 3rem;
+  color:#ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+
+}
+
+
+.A, .B, .C, .D, .E, .F {
+width:100vw;
+height:101vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+text-transform: uppercase;
+text-align:center;
+overflow:hidden;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+
+
+.A p {
+  font-size: 5rem;
+  color: white;
+  opacity: 0; /* Initial state */
+  transform: translateY(100px); /* Start lower */
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+
+
+
+.imageWrapper{
+  position: relative;;
+  width: 350px;
+  height: 450px;
+  background-color: transparent;
+  margin: auto;
+  display: inline-flex;
+}
+img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+
+.A {
+width:100vw;
+height:101vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+text-transform: uppercase;
+text-align:center
+}
+
+.B p {
+  color: white;
+  position: relative;
+  top: 1px;
+  display: inline-flex;
+}
+
+
 
 .modal.visible{
   pointer-events:auto;
@@ -72,6 +177,7 @@ button, a, .clickable {
   font-size: 5rem;
   color:#ffffff;
   text-align: center;
+  margin-bottom: 10px;
 }
 
 
@@ -138,6 +244,89 @@ button, a, .clickable {
   background-color: #ffffff;
   color: #0a1027;
   transform: scale(1.1);
+}
+
+.carousel {
+  width: 100%;
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+  position: relative;
+  z-index: 1;
+}
+
+.carousel-item {
+  min-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: #2bbdf3;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.carousel-item h1{
+  margin: 20px;
+  overflow-wrap: break-word;
+  font-size: 1.7rem;
+  text-align: center;
+}
+
+
+.carousel-item:hover {
+  transform: scale(0.98);
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.7);
+  border: none;
+  padding: 1rem;
+  cursor: pointer;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+
+.carousel-button.prev {
+  left: 1rem;
+}
+
+.carousel-button.next {
+  right: 1rem;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.indicator.active {
+  background: white;
 }
 
 .material-symbols-outlined {

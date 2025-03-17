@@ -42,16 +42,81 @@
 
     <div class="modal" id="Cexperience-modal">
       <div class="modal-wrapper">
-        <div class="modalE-header">Work
+        <div class="modal-header">My Work 🦾
         </div>
-        <div class="modal-content">
-          <div class="modal-title">Download My CV here!
-          <div class="modal-description"><a class="material-symbols-outlined" href="/SaraIbsharat-CV.pdf"  download alt="download">
-            download</a>
-            </div>
-          <div class="modal-extra"></div>
-        </div>
+        
+        <div class="carousel">
+          <div class="carousel-track">
+              <div class="carousel-item" data-id="1"><h1>Pose Detection<br> AI Model</h1></div>
+              <div class="carousel-item" data-id="2">Blog</div>
+              <div class="carousel-item" data-id="3">Animations</div>
+              <div class="carousel-item" data-id="4">Mun</div>
+          </div>
+          
+          <button class="carousel-button prev">←</button>
+          <button class="carousel-button next">→</button>
+          
+          <div class="carousel-indicators">
+              <div class="indicator active"></div>
+              <div class="indicator"></div>
+              <div class="indicator"></div>
+              <div class="indicator"></div>
+          </div>
       </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.querySelector('.carousel-track');
+            const items = document.querySelectorAll('.carousel-item');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const indicators = document.querySelectorAll('.indicator');
+            let currentIndex = 0;
+
+
+            function updateCarousel() {
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentIndex);
+                });
+
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.disabled = currentIndex === items.length - 1;
+            }
+
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentIndex < items.length - 1) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            });
+
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                }
+            });
+
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currentIndex = index;
+                    updateCarousel();
+                });
+            });
+
+            // Enable pointer events
+            document.querySelectorAll('.carousel-item, .carousel-button, .indicator')
+                .forEach(element => {
+                    element.style.pointerEvents = 'auto';
+                });
+        });s
+    </script>
+      
     </div>
     </div>
 
@@ -146,7 +211,26 @@
     </div>
     
 
-    <div class="modal" id="Cabuot_me-modal">
+    <div class="modalA" id="Cabuot_me-modal">
+       <section class="A">
+        <p>Hey👋 I’m Sara Bsharat</p>
+       </section>
+       <section class="B">
+        <p >A tech enthusiast with a strong interest in both hardware and software.</p>
+
+       </section>
+       <section class ="C" >
+        <p> My journey started early, building and fixing things before I even knew</p>
+      </section>
+       <section class ="D">
+        <p>Over the years, I’ve explored 3D design, coding, and digital media.</p>
+       </section>
+       <section class ="D">
+        <p>Right now, I’m preparing for my 12th-year exams while constantly working on new projects.</p>
+       </section>
+       <section class ="E">
+        <p>Wish me good luck!😆</p>
+       </section>
     </div>
 
     <div class="modal" id="Ccontact_me-modal">
@@ -174,6 +258,7 @@
     </div>
 <div class="footer">&copy; All rights reserved - sarabsharat </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <!-- 
 
 
