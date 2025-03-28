@@ -1,370 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  
+
   <!-- React and ReactDOM from CDN -->
 <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=download_done" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=download" />
 <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sara Ibsharat</title>
+  <link rel="icon" type="image/x-icon" href="/game.ico">
   <link rel="stylesheet" href="./style.css" />
-  
 </head>
 <body>
-  <div id="experience">
-    <canvas id="experience-canvas"></canvas>
+  
+  <div class="return">
+    <button class="Rbutton" id="return">Return</button>
   </div>
 
-  <div class="return" >
-  <button class="Rbutton" id="return">Return</button></div>
-
-
-    <div class="modal" id="Cresume-modal">
-      <div class="modal-wrapper">
-        <div class="modal-header">Resume
+<!-- DONE 🚨 -->
+  <div class="modal" id="Cresume-modal">
+      <div class="modal-header">Resume
+      </div>
+        <div class="modal-title">Download My CV here!
+          <div class="modal-description"><a class="material-symbols-outlined" href="/SaraIbsharat-CV.pdf" download
+              alt="download">
+              download</a>
+          </div>
         </div>
-        <div class="modal-content">
-          <div class="modal-title">Download My CV here!
-          <div class="modal-description"><a class="material-symbols-outlined" href="/SaraIbsharat-CV.pdf"  download alt="download">
-            download</a>
-            </div>
-          <div class="modal-extra"></div>
+        <iframe src="/SaraIbsharat-CV.pdf" width="100%" height="600px"></iframe>
+    </div>
+<!-- DONE 🚨 -->
+
+
+<div class="modalA" id="Cexperience-modal">
+  <div id="lightbox" class="lightbox">
+    <span class="close-btn">&times;</span>
+    <div class="lightbox-content">
+      <img id="lightbox-image" class="lightbox-media">
+      <video id="lightbox-video" class="lightbox-media" controls>
+        <source src="" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+  <div class="panels-container">
+    <!-- THE DESCCC -->
+    <div class="content-panel">
+      <div class="content-section" id="blog-content">
+        <h1 class="modal-header">Blog</h1>
+        <div class="content-body">
+          <!-- DLKJGLDSDJHGS -->
         </div>
       </div>
-    </div>
-    </div>
-
-
-    <div class="modal" id="Cexperience-modal">
-      <div class="modal-wrapper">
-        <div class="modal-header">My Work 🦾
-        </div>
+      <div class="content-section" id="mun-content">
+        <h1 class="modal-header">Model United Nations</h1>
+        <div class="content-body">
+          <!--KDFSAHJKDHFJHGK -->
+          <div class="card-container">
+            <div class="video-cards">
+                <div class="card">
+                  <div class="video-wrapper">
+                    <video class="media" preload="metadata">
+                        <source src="/MUN/1v.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-button"></div>
+                </div>
+                <div class="subtitle">Teaser 1</div>
+                </div>
+                <div class="card">
+                  <div class="video-wrapper">
+                    <video class="media" preload="metadata">
+                        <source src="/MUN/2v.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-button"></div>
+                </div>
+                <div class="subtitle">Teaser 2</div>
+                </div>
+            </div>
         
-        <div class="carousel">
-          <div class="carousel-track">
-              <div class="carousel-item" data-id="1"><h1>Pose Detection<br> AI Model</h1></div>
-              <div class="carousel-item" data-id="2">Blog</div>
-              <div class="carousel-item" data-id="3">Animations</div>
-              <div class="carousel-item" data-id="4">Mun</div>
-          </div>
-          
-          <button class="carousel-button prev">←</button>
-          <button class="carousel-button next">→</button>
-          
-          <div class="carousel-indicators">
-              <div class="indicator active"></div>
-              <div class="indicator"></div>
-              <div class="indicator"></div>
-              <div class="indicator"></div>
-          </div>
-      </div>
-
-      <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const track = document.querySelector('.carousel-track');
-            const items = document.querySelectorAll('.carousel-item');
-            const prevBtn = document.querySelector('.prev');
-            const nextBtn = document.querySelector('.next');
-            const indicators = document.querySelectorAll('.indicator');
-            let currentIndex = 0;
-
-
-            function updateCarousel() {
-                track.style.transform = `translateX(-${currentIndex * 100}%)`;
-                
-                indicators.forEach((indicator, index) => {
-                    indicator.classList.toggle('active', index === currentIndex);
-                });
-
-                prevBtn.disabled = currentIndex === 0;
-                nextBtn.disabled = currentIndex === items.length - 1;
-            }
-
-            nextBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (currentIndex < items.length - 1) {
-                    currentIndex++;
-                    updateCarousel();
-                }
-            });
-
-            prevBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateCarousel();
-                }
-            });
-
-            indicators.forEach((indicator, index) => {
-                indicator.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    currentIndex = index;
-                    updateCarousel();
-                });
-            });
-
-            // Enable pointer events
-            document.querySelectorAll('.carousel-item, .carousel-button, .indicator')
-                .forEach(element => {
-                    element.style.pointerEvents = 'auto';
-                });
-        });s
-    </script>
-      
-    </div>
-    </div>
-
-    <div class="modal" id="Cskills-modal">
-      <div class="modal-wrapper">
-        <div class="modal-header">Skills
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">What I learned to use in my journey 🧭<br>
-            <div class="container">
-
-              <!-- HTML -->
-              <div class="skill-item" data-tooltip="HTML5">
-                <div class="skill-icon">
-                  <img src="/Icons/html-5-logo.svg"/>
+            <div class="carousel-container">
+              <div class="image-cards carousel-track">
+                <div class="card">
+                  <img class="media" src="MUN/1.png" alt="Image 1" loading="lazy">
+                  <div class="subtitle">The Conference Logo</div>
                 </div>
+                <div class="card">
+                  <img class="media" src="MUN/2.jpg" alt="Image 2" loading="lazy">
+                  <div class="subtitle">A 8ft &times; 4ft Banner</div>
+                </div>
+                <div class="card">
+                  <img class="media" src="MUN/3.jpg" alt="Image 3" loading="lazy">
+                  <div class="subtitle">Participation Certifecate</div>
+                </div>
+                <div class="card">
+                  <img class="media" src="MUN/4.jpg" alt="Image 4" loading="lazy">
+                  <div class="subtitle">Rollup</div>
+                </div>
+                <!-- Add more cards as needed -->
               </div>
+              <button class="carousel-arrow prev">❮</button>
+              <button class="carousel-arrow next">❯</button>
+            </div>
 
-              <!-- CSS3 -->
-              <div class="skill-item" data-tooltip="CSS">
-                <div class="skill-icon">
-                  <img src="/Icons/css3.svg"/>
-                  </div>
-              </div>
+        </div>
+        <div class="btn-container">
+        <button class="EXP" id="show-videos">Show Videos</button>
+        <button class="EXP" id="show-images">Show Images</button>
+      </div>
+       <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Lightbox Elements
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightbox-image');
+    const lightboxVideo = document.getElementById('lightbox-video');
+    const closeBtn = document.querySelector('.close-btn');
+
+    // Media Click Handler
+    document.querySelectorAll('.media').forEach(media => {
+        media.addEventListener('click', (e) => {
+            e.preventDefault();
             
-              <!-- Python -->
-               <div class="skill-item" data-tooltip="Python">
-            <div class="skill-icon">
-              <img src="/Icons/logo-python.svg"/>
-            </div>
-          </div>
-          <!-- Pandas -->
-          <div class="skill-item" data-tooltip="Pandas">
-            <div class="skill-icon">
-              <img src="/Icons/pandas.svg"/>
-            </div>
-          </div>
-           <!-- Numpy -->
-           <div class="skill-item" data-tooltip="Numpy">
-            <div class="skill-icon">
-              <img src="/Icons/numpy.svg"/>
-            </div>
-          </div>
-              <!-- Blender -->
-              <div class="skill-item blender" data-tooltip="Blender">
-                <div class="skill-icon">
-                  <img src="/Icons/blender-software.svg"/>
-                  </div>
-              </div>
-              <!-- Adobe AE -->
-              <div class="skill-item blender" data-tooltip="Adobe Ae">
-                <div class="skill-icon">
-                  <img src="/Icons/adobe-after-effects.svg"/>
-                  </div>
-              </div>
-              <!-- Adobe AI -->
-              <div class="skill-item" data-tooltip="Adobe Ai">
-                <div class="skill-icon">
-                  <img src="/Icons/adobe-illustrator.svg"/>
-                </div>
-              </div>
-              <!-- Adobe Ch -->
-              <div class="skill-item" data-tooltip="Adobe Ch">
-                <div class="skill-icon">
-                  <img src="/Icons/Adobe_Character_Animator_icon_(2020) (1).svg"/>
-                </div>
-              </div>
-            </div>
+            if (media.tagName === 'IMG') {
+                // Handle Image Click
+                console.log('Image clicked:', media.src);
+                lightboxImage.src = media.src;
+                lightboxImage.style.display = 'block';
+                lightboxVideo.style.display = 'none';
+                lightbox.classList.add('active');
+                
+            } else if (media.tagName === 'VIDEO') {
+                // Handle Video Click
+                console.log('Video clicked');
+                const videoSource = media.querySelector('source').src;
+                lightboxVideo.querySelector('source').src = videoSource;
+                lightboxVideo.load();
+                
+                lightboxVideo.style.display = 'block';
+                lightboxImage.style.display = 'none';
+                lightbox.classList.add('active');
+                
+                lightboxVideo.controls = true;
+                lightboxVideo.muted = true;
+                lightboxVideo.play().catch((error) => {
+                    console.log('Autoplay blocked:', error);
+                    lightboxVideo.controls = true;
+                });
+            }
+        });
+    });
+
+    // Close Lightbox
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        lightboxVideo.pause();
+        lightboxVideo.currentTime = 0;
+        lightboxVideo.controls = false;
+        lightboxVideo.muted = false;
+        console.log('Lightbox closed');
+    }
+
+    // Event Listeners
+    closeBtn.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+        if(e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape') closeLightbox();
+    });
+
+    // Tab Switching
+    const videoCards = document.querySelector('.video-cards');
+    const imageCards = document.querySelector('.image-cards');
+    const showVideosButton = document.getElementById('show-videos');
+    const showImagesButton = document.getElementById('show-images');
+
+    function showVideos() {
+        videoCards.style.display = 'flex';
+        imageCards.style.display = 'none';
+        console.log('Showing videos');
+    }
+
+    function showImages() {
+        imageCards.style.display = 'flex';
+        videoCards.style.display = 'none';
+        console.log('Showing images');
+    }
+
+    showVideosButton.addEventListener('click', showVideos);
+    showImagesButton.addEventListener('click', showImages);
+
+    // Initialize
+    showVideos();
+});
+const track = document.querySelector('.carousel-track');
+const cards = document.querySelectorAll('.card');
+const nextButton = document.querySelector('.next');
+const prevButton = document.querySelector('.prev');
+const cardCount = cards.length;
+let isAnimating = false;
+const animationDuration = 500;
+let currentIndex = 0;
+
+function updateCarousel() {
+  track.style.transform = `translate3d(${currentIndex * -50}%, 0, 0)`; // Use 3D transform
+}
+
+function handleNext() {
+  if (isAnimating) return;
+  isAnimating = true;
+  currentIndex = (currentIndex + 1) % Math.ceil(cardCount / 2);
+  updateCarousel();
+  setTimeout(() => isAnimating = false, animationDuration);
+}
+
+function handlePrev() {
+  if (isAnimating) return;
+  isAnimating = true;
+  currentIndex = (currentIndex - 1 + Math.ceil(cardCount / 2)) % Math.ceil(cardCount / 2);
+  updateCarousel();
+  setTimeout(() => isAnimating = false, animationDuration);
+}
+
+const throttle = (fn, wait) => {
+  let lastCall = 0;
+  return (...args) => {
+    const now = Date.now();
+    if (now - lastCall < wait) return;
+    lastCall = now;
+    return fn(...args);
+  };
+};
+
+
+nextButton.addEventListener('click', handleNext);
+prevButton.addEventListener('click', handlePrev);
+document.querySelectorAll('.media').forEach(img => {
+  const src = img.getAttribute('src');
+  new Image().src = src; // Preload images
+});
+// Optional: Add infinite scroll illusion by cloning cards
+const cloneFirstCards = () => {
+  const firstTwo = Array.from(cards).slice(0, 2);
+  firstTwo.forEach(card => {
+    const clone = card.cloneNode(true);
+    track.appendChild(clone);
+  });
+};
+
+if (cardCount % 2 !== 0) {
+  cloneFirstCards();
+}
+
+</script>
         </div>
+      </div>
+    </div>
+
+    <!-- Clicking THING -->
+    <div class="nav-panel">
+      <ul class="talk">
+        <li data-target="blog-content">
+          <strong>Blog</strong>
+          <span class="subtext">Functional Blog</span>
+        </li>
+        <li data-target="mun-content">
+          <strong>MUN</strong>
+          <span class="subtext">Illustrations</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+ 
+
+<!-- DONE 🚨 -->
+  <div class="modal" id="Cskills-modal">
+      <div class="modal-header">Skills
+      </div>
+      <div class="modal-content">
+        <div class="modal-title">What I learned to use in my journey 🧭<br>
+          <div class="container">
+
+            <!-- HTML -->
+            <div class="skill-item" data-tooltip="HTML5">
+              <div class="skill-icon">
+                <img src="/Icons/html-5-logo.svg" />
+              </div>
+            </div>
+
+            <!-- CSS3 -->
+            <div class="skill-item" data-tooltip="CSS">
+              <div class="skill-icon">
+                <img src="/Icons/css3.svg" />
+              </div>
+            </div>
+
+            <!-- Python -->
+            <div class="skill-item" data-tooltip="Python">
+              <div class="skill-icon">
+                <img src="/Icons/logo-python.svg" />
+              </div>
+            </div>
+            <!-- Pandas -->
+            <div class="skill-item" data-tooltip="Pandas">
+              <div class="skill-icon">
+                <img src="/Icons/pandas.svg" />
+              </div>
+            </div>
+            <!-- Numpy -->
+            <div class="skill-item" data-tooltip="Numpy">
+              <div class="skill-icon">
+                <img src="/Icons/numpy.svg" />
+              </div>
+            </div>
+            <!-- Blender -->
+            <div class="skill-item blender" data-tooltip="Blender">
+              <div class="skill-icon">
+                <img src="/Icons/blender-software.svg" />
+              </div>
+            </div>
+            <!-- Adobe AE -->
+            <div class="skill-item blender" data-tooltip="Adobe Ae">
+              <div class="skill-icon">
+                <img src="/Icons/adobe-after-effects.svg" />
+              </div>
+            </div>
+            <!-- Adobe AI -->
+            <div class="skill-item" data-tooltip="Adobe Ai">
+              <div class="skill-icon">
+                <img src="/Icons/adobe-illustrator.svg" />
+              </div>
+            </div>
+            <!-- Adobe Ch -->
+            <div class="skill-item" data-tooltip="Adobe Ch">
+              <div class="skill-icon">
+                <img src="/Icons/Adobe_Character_Animator_icon_(2020) (1).svg" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+  </div>
+<!-- DONE 🚨 -->
+
+
+<!-- DONE 🚨 -->
+  <div class="modal" id="Ctestimonials-modal">
+      <div class="modal-header">Testimonials
+      </div>
+      <div class="modal-content">
+        <div class="talk">
+          <ul>
+              <li><span>Yazan Abu Taa</span>: Blaa.</li>
+              <li><span>Mais Awad</span>: "Sara has always had such a business-like approach towards everything that she undertook".</li>
+               </ul>
+      </div> 
+      <div class="modal-description">*Note: Recommendation letter available upon request!📝
+    </div>
+      </div>
+    </div>
+<!-- DONE 🚨 --> 
+
+<!-- DONE 🚨 --> 
+<div class="modalA" id="Cwork-modal">
+    <div class="modal-content">
+      <div class="modal-header">Experience 🧪</div>
       
-        </div>
-
-      </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal" id="Ctestimonials-modal">
+    <div class="bsec"><div class="bsec-info">
+      <div class="blob">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="300" height="300">
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -6" result="goo"/>
+        </filter>
+        
+        <g filter="url(#goo)" transform="translate(50 50)">
+          <path fill="#ffffff">
+            <animate attributeName="d" 
+                     dur="8s"
+                     repeatCount="indefinite"
+                     calcMode="spline"
+                     keyTimes="0;0.25;0.5;0.75;1"
+                     keySplines="0.445 0.05 0.55 0.95;
+                                 0.445 0.05 0.55 0.95;
+                                 0.445 0.05 0.55 0.95;
+                                 0.445 0.05 0.55 0.95"
+                     values="
+                     M 0,-20 
+                     C 15,-25 25,-15 25,0 
+                     C 25,15 10,25 -10,25 
+                     C-25,25 -30,10 -25,-10 
+                     C-20,-25 -10,-30 0,-20 Z;
       
+                     M 0,-25 
+                     C 20,-25 30,-5 20,15 
+                     C 10,35 -15,35 -25,15 
+                     C-35,-5 -20,-25 0,-25 Z;
+      
+                     M 0,-15 
+                     C 25,-20 35,5 15,25 
+                     C-5,45 -30,25 -35,0 
+                     C-40,-25 -15,-35 0,-15 Z;
+      
+                     M 0,-20 
+                     C 10,-30 25,-15 15,10 
+                     C 5,35 -20,30 -25,5 
+                     C-30,-20 -10,-30 0,-20 Z;
+      
+                     M 0,-20 
+                     C 15,-25 25,-15 25,0 
+                     C 25,15 10,25 -10,25 
+                     C-25,25 -30,10 -25,-10 
+                     C-20,-25 -10,-30 0,-20 Z"
+            />
+            <animate attributeName="r" 
+                     values="1;1.05;1" 
+                     dur="4s" 
+                     repeatCount="indefinite"
+                     additive="sum"/>
+          </path>
+        </g>
+      </svg><img class="blob-image" src="NXGEN.png" alt="NXGEN" />
     </div>
-
-    <div class="modal" id="Cwork-modal">
-      <div class="image-content">
-        <div class="image-container">
-          <div class="images">
-            <div class="View" data-grid="-"></div>
-            <div class="NXGEN AG" data-grid="img-1"></div>
-            <div class="MUN" data-grid="img-2"></div>
-          </div>
-        </div>
-      </div>
+    <div class="modal-header"><a href="https://www.nxgen.io/en/">NXGEN Technology AG</a></div> 
+      <h1 class="desc">Dec 2024 - February 2025</h1>
+        <div class="box linkedin" href="https://www.linkedin.com/company/nxgen-technology-ag/posts/?feedView=all"
+                data-tooltip="Linkedin">
+                <div><a href="https://www.linkedin.com/company/nxgen-technology-ag/posts/?feedView=all"><i
+                      class="fa-brands fa-linkedin"></i></a></div>
+              </div>
+      
+      <div class="talk">
+        <ul>
+            <li><strong>Front-End & Back-End Development:</strong> Built interactive and dynamic web experiences.</li>
+            <li><strong>AI Pose Detection Model:</strong> Developed an AI model for pose detection.</li>
+            <li><strong>Team Collaboration:</strong> Worked alongside skilled professionals, enhancing problem-solving and teamwork skills.</li>
+        </ul>
     </div>
-    
+  </div></div></div>
+</div>
+<!-- DONE 🚨 --> 
 
-    <div class="modalA" id="Cabuot_me-modal">
-       <section class="A">
+<!-- DONE 🚨 -->
+  <div class="modalA" id="Cabuot_me-modal">
+    <div class="scroll-container">
+      <section class="A">
         <p>Hey👋 I’m Sara Bsharat</p>
-       </section>
-       <section class="B">
-        <p >A tech enthusiast with a strong interest in both hardware and software.</p>
+      </section>
+      <section class="B">
+        <p>A tech enthusiast with a strong interest in both hardware and software.</p>
 
-       </section>
-       <section class ="C" >
+      </section>
+      <section class="C">
         <p> My journey started early, building and fixing things before I even knew</p>
       </section>
-       <section class ="D">
-        <p>Over the years, I’ve explored 3D design, coding, and digital media.</p>
-       </section>
-       <section class ="D">
+      <section class="D">
+        <p>Over the years, I’ve explored 3D design, coding, and media prepping.</p>
+      </section>
+      <section class="D">
         <p>Right now, I’m preparing for my 12th-year exams while constantly working on new projects.</p>
-       </section>
-       <section class ="E">
+      </section>
+      <section class="E">
         <p>Wish me good luck!😆</p>
-       </section>
+      </section>
     </div>
+  </div>
+<!-- DONE 🚨 -->
+ 
+<!-- DONE 🚨 -->
+<div class="modal" id="Ccontact_me-modal">
+      <div class="modal-header">Contact Me!
+      </div>
+      <div class="modal-content">
+        <div class="modal-title">Let's Get In Touch!👋<br>
+          <div class="container">
+            <div class="box linkedin" href="https://www.linkedin.com/in/sara-ibsharat-a8124b163/"
+              data-tooltip="Linkedin">
+              <div><a href="https://www.linkedin.com/in/sara-ibsharat-a8124b163/"><i
+                    class="fa-brands fa-linkedin"></i></a></div>
+            </div>
+            <div class="box github" data-tooltip="Github" href=" https://github.com/sarabsharat">
+              <div><a href="https://github.com/sarabsharat"><i class="fa-brands fa-github"></i></a></div>
+            </div>
+            <div class="box mail" data-tooltip="Mail">
+              <div><a href="mailto:sarabsharat.sb@gmail.com"><i class="fa-solid fa-at"></i></a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+<!-- DONE 🚨 -->
 
-    <div class="modal" id="Ccontact_me-modal">
-      <div class="modal-wrapper">
-        <div class="modal-header">Contact Me!
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">Let's Get In Touch!👋<br>
-            <div class="container">
-              <div class="box linkedin" href = "https://www.linkedin.com/in/sara-ibsharat-a8124b163/" data-tooltip="Linkedin"><div><a href="https://www.linkedin.com/in/sara-ibsharat-a8124b163/"><i class="fa-brands fa-linkedin"></i></a></div>
-        </div>
-        <div class="box github" data-tooltip="Github" href=" https://github.com/sarabsharat"><div><a href="https://github.com/sarabsharat" ><i class="fa-brands fa-github"></i></a></div>
-        </div>
-        <div class="box mail" data-tooltip="Mail"><div><a href="mailto:sarabsharat.sb@gmail.com"><i class="fa-solid fa-at"></i></a></div>
-        </div>
-        </div>
-
-      </div>
-        </div>
-      </div>
-    </div>
-
-
-
-    </div>
-<div class="footer">&copy; All rights reserved - sarabsharat </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<!-- 
-
-
-    <div class="modal" id="Testimonials">
-      <div class="modal-wrapper">
-        <div class="modal-header">
-          <button class="modal-exit">Exit</button>
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">Testimonials
-          <div class="modal-description"></div>
-          <div class="modal-extra"></div>
-        </div>
-      </div>
-      </div>
-      </div>
-      
-      
-      
-      
-      <div class="modal" id="About-me">
-      <div class="modal-wrapper">
-        <div class="modal-header">
-          <button class="modal-exit">Exit</button>
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">About Me 
-          <div class="modal-description"></div>
-          <div class="modal-extra"></div>
-        </div>
-      </div>
-      </div>
-      </div>
-      
-      
-      
-      
-      <div class="modal" id="Contact-me">
-      <div class="modal-wrapper">
-        <div class="modal-header">
-          <button class="modal-exit">Exit</button>
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">Contact Me
-          <div class="modal-description"></div>
-          <div class="modal-extra"></div>
-        </div>
-      </div>
-      </div>
-      </div>
-      
-      
-      
-      <div class="modal" id="Experience">
-      <div class="modal-wrapper">
-        <div class="modal-header">
-          <button class="modal-exit">Exit</button>
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">Experience
-          <div class="modal-description"></div>
-          <div class="modal-extra"></div>
-        </div>
-      </div>
-      </div>
-      </div>
-      
-      
-      
-      
-      <div class="modal" id="Skills">
-      <div class="modal-wrapper">
-        <div class="modal-header">
-          <button class="modal-exit">Exit</button>
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">Skills
-          <div class="modal-description"></div>
-          <div class="modal-extra"></div>
-        </div>
-      </div>
-      </div>
-      </div>
-      
-      
-      
-      <div class="modal" id="Work">
-      <div class="modal-wrapper">
-        <div class="modal-header">
-          <button class="modal-exit">Exit</button>
-        </div>
-        <div class="modal-content">
-          <div class="modal-title">Work
-          <div class="modal-description"></div>
-          <div class="modal-extra"></div>
-        </div>
-      </div>
-      </div>
-      </div> -->
+<div id="experience">
+  <canvas id="experience-canvas"></canvas>
+</div>
 
 
+  <div class="footer">&copy; All rights reserved - sarabsharat </div>
 
-   
-
-
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script type="importmap">
     {
       "imports": {

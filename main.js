@@ -112,8 +112,9 @@ let currentModal = null;
 
 loader.load( '252.glb', function ( glb ) {
   scene.add( glb.scene );
-  renderer.domElement.style.zIndex = 0; // Keep canvas behind modals
-renderer.domElement.style.pointerEvents = 'auto';
+  interactionEnabled = true;  
+  renderer.domElement.style.pointerEvents = 'auto';
+
   objectMixer = new THREE.AnimationMixer(glb.scene);
   clips = glb.animations;
   mixer = new THREE.AnimationMixer(glb.scene);
@@ -165,19 +166,19 @@ action.play();
 });
   });
     } 
-//#endregion
-      });
+//#endregion    
+});
 
       
 //#region HTML ANIMATIONS
 function showModal(modal) {
   if (!modal) return;
-
+  canvas.style.pointerEvents = 'none';
+    modal.style.pointerEvents = "auto";
   // Clear existing timeouts and animations
   if (modalTimeout) clearTimeout(modalTimeout);
   gsap.killTweensOf(modal);
   gsap.killTweensOf(".A p");
-  
   modalTimeout = setTimeout(() => {
     if (modal && currentTarget) {
       // Modal animation
@@ -193,6 +194,7 @@ function showModal(modal) {
         ease: "expo.out",
         onStart: () => {
           modal.style.display = 'block';
+          modal.style.pointerEvents = "auto";
         }
       });
   
@@ -231,10 +233,8 @@ function showModal(modal) {
         }
       });
     }
-  }, 500); // Reduced delay
-  
-  currentModal = modal;
-        
+  }, 500); 
+  currentModal = modal;    
 }
 document.addEventListener('DOMContentLoaded', function() {
   // Generic function for all icons
@@ -271,7 +271,19 @@ document.addEventListener('DOMContentLoaded', function() {
   setupIconAnimation('.box.github');
   setupIconAnimation('.box.mail');
 });
-
+document.querySelectorAll('.talk li').forEach(item => {
+  item.addEventListener('click', function() {
+    // Remove all active states
+    document.querySelectorAll('.talk li, .content-section').forEach(el => {
+      el.classList.remove('active');
+    });
+    
+    // Activate clicked item
+    this.classList.add('active');
+    const target = document.getElementById(this.dataset.target);
+    target.classList.add('active');
+  });
+});
 
 //#endregion
       
@@ -355,6 +367,11 @@ function moveCameraTo(targetName) {
 
     
 function returnToInitial() {
+  document.querySelectorAll('.modal, .modalA').forEach(modal => {
+    modal.classList.remove('active');
+  });
+  interactionEnabled = true;
+  canvas.style.pointerEvents = 'auto';
   if (!isAnimating && currentTarget) {
   isAnimating = true;
   renderer.domElement.style.pointerEvents = 'auto';
@@ -457,7 +474,7 @@ function onResize(){
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // No need to call handleResize as OrbitControls does not have this method
+  // No need to call handleResize as OrbitControls does not have this methoit
 }
 
 function onMouseMove( event ) {
@@ -500,7 +517,6 @@ function onClick() {
   const intersects = raycaster.intersectObjects(intersectObjects);
   
   if (intersects.length > 0) {
-    interactionEnabled = false; // Disable further clicks
     const objectName = intersects[0].object.name;
     moveCameraTo(objectName);
     Rbutton.style.display = "inline";
@@ -515,7 +531,7 @@ window.addEventListener( 'mousemove', onMouseMove );
 
 
 //mobile responsive
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 let controls = null
 
 //controls for mobille
@@ -534,6 +550,7 @@ function mobileControls (){
   controls.maxPolarAngle = THREE.MathUtils.degToRad(80);
   controls.minAzimuthAngle = Math.PI/1.5;
   controls.maxAzimuthAngle = -Math.PI/2;
+  controls.update();
   window.removeEventListener('mousemove', onMouseMove);
 } else {
   window.addEventListener('mousemove', onMouseMove);
