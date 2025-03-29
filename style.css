@@ -123,9 +123,7 @@ button, a, .clickable {
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
 }
-.modalA.active {
-  pointer-events: auto;
-}
+
 .modal-title {
   text-align: center;
   font-size: 24px;
@@ -512,6 +510,7 @@ overflow:hidden;
 text-transform: uppercase;
 text-align:center
 }
+
 .B p {
   color: white;
   position: relative;
@@ -630,6 +629,7 @@ section.F { background: url('F.svg') no-repeat center / cover; }
 .nav-panel {
   padding-left: 40px;
   display: flex;
+  pointer-events: auto !important;
   align-items: center;
 }
 .content-section {
@@ -659,42 +659,40 @@ section.F { background: url('F.svg') no-repeat center / cover; }
   padding: 2rem;
   gap: 2rem;
 }
-
 .card {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   border: 1px solid rgba(231, 157, 223, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  margin: 1rem .5rem;
-  width: 100%;
+  margin: 0 10px;
+  width: 200px; /* Base width, you can adjust this for the final size */
+  min-width: 0;
   max-width: 600px;
   overflow: hidden;
   position: relative;
-  flex: 0 0 50%;
+  flex: 0 0 calc(50% - 20px); /* Adjust for two cards at once */
   padding: 0 10px;
   box-sizing: border-box;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
   transform: translateZ(0); /* Force hardware acceleration */
 }
-
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 40px rgba(231, 157, 223, 0.2);
   border-color: rgba(231, 157, 223, 0.3);
 }
-
+/* Style for the carousel container */
 .carousel-container {
   position: relative;
   overflow: hidden;
-  width: 100%;
-  max-width: 1200px;
+  width: 100%; /* Makes the carousel container responsive */
+  max-width: 1200px; /* Limits the maximum size */
   margin: 0 auto;
   will-change: contents; /* Hint browser for optimization */
 }
 .carousel-track {
-  display: flex;
-  transition: transform 0.5s ease;
-  backface-visibility: hidden; /* Improve rendering */
+  display: flex; /* Align cards horizontally */
+  transition: transform 0.5s ease-in-out; /* Smooth transition */
 }
 .carousel-arrow {
   position: absolute;
@@ -711,31 +709,26 @@ section.F { background: url('F.svg') no-repeat center / cover; }
   transition: all 0.3s ease;
   
 }
-
 .carousel-arrow:hover {
   background: rgba(0, 0, 0, 0.9);
 }
-
 .prev {
   left: 20px;
 }
-
 .next {
   right: 20px;
 }
-
 .media {
   width: 100%;
   height: 300px;
   object-fit: cover;
   border-radius: 16px 16px 0 0;
   transition: transform 0.3s ease;
-  pointer-events: none; /* Reduce repaint area */
+  
   cursor: pointer;
   transition: transform 0.3s ease;
   
 }
-
 .media:hover {
   transform: scale(1.03);
 }
@@ -751,16 +744,9 @@ section.F { background: url('F.svg') no-repeat center / cover; }
   text-align: center;
   font-size: 1.2rem;
   font-weight: 300;
-  background: linear-gradient(to right, 
-    rgba(231, 157, 223, 0.1) 0%, 
-    rgba(231, 157, 223, 0.05) 100%);
   white-space: nowrap; /* Prevent text from wrapping */
   text-overflow: ellipsis; /* Add ellipsis for overflow text */
   overflow: hidden; /* Hide overflow text */
-}
-.video-wrapper {
-  position: relative;
-  cursor: pointer;
 }
 .play-button {
   position: absolute;
@@ -772,10 +758,8 @@ section.F { background: url('F.svg') no-repeat center / cover; }
   background: rgba(231, 157, 223, 0.7);
   border-radius: 50%;
   transition: all 0.3s ease;
-  border: 2px solid white;
   pointer-events: none;
 }
-
 .play-button::before {
   content: '';
   position: absolute;
@@ -786,17 +770,14 @@ section.F { background: url('F.svg') no-repeat center / cover; }
   border-width: 15px 0 15px 25px;
   border-color: transparent transparent transparent white;
 }
-
 .video-wrapper:hover .play-button {
   background: rgba(231, 157, 223, 0.9);
   transform: translate(-50%, -50%) scale(1.1);
 }
-
 .media[playing] + .play-button {
   opacity: 0;
   pointer-events: none;
 }
-
 .EXP {
   background: transparent;
   border: 1px solid #e79ddf;
@@ -818,22 +799,19 @@ section.F { background: url('F.svg') no-repeat center / cover; }
   text-overflow: ellipsis; /* Add ellipsis for overflow text */
   overflow: hidden; /* Hide overflow text */
 }
-
 button:hover {
   background: rgba(231, 157, 223, 0.1);
   box-shadow: 0 0 15px rgba(231, 157, 223, 0.2);
   transform: translateY(-2px);
 }
-
 button.active {
   background: rgba(231, 157, 223, 0.2);
   border-color: transparent;
 }
-
 .video-cards, .image-cards {
   animation: fadeInUp 0.6s ease-out;
 }
-.lightbox {
+#lightbox {
   display: none;
   position: fixed;
   top: 0;
@@ -841,38 +819,42 @@ button.active {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.9);
-  z-index: 1000;
+  z-index: 10001;
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
-
-.lightbox.active {
+#lightbox.active {
   display: flex;
+  opacity: 1;
 }
-
 .lightbox-content {
   position: relative;
   max-width: 90%;
   max-height: 90%;
 }
-
-.lightbox-media {
+#lightbox-image {
   max-width: 90%;
     max-height: 90vh;
     border-radius: 8px;
 }
-.lightbox-media[src],
-.lightbox-media[src]:not([src=""]) {
-  display: block; /* Show when has content */
+#lightbox-video {
+  max-width: 80vw;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: black;
+  border-radius: 8px;
 }
-.lightbox-video::-webkit-media-controls-panel {
+#lightbox-video::-webkit-media-controls-panel {
   background: rgba(0, 0, 0, 0.7);
 }
-.lightbox-video::-webkit-media-controls-play-button,
-.lightbox-video::-webkit-media-controls-timeline {
+#lightbox-video::-webkit-media-controls-play-button,
+#lightbox-video::-webkit-media-controls-timeline {
   filter: invert(1);
 }
-/* Image cursor */
 .media[src$=".jpg"], 
 .media[src$=".png"] {
   cursor: zoom-in;
@@ -887,22 +869,17 @@ button.active {
     text-shadow: 0 0 15px rgba(231, 157, 223, 0.5);
     transition: all 0.3s ease;
 }
-
 .close-btn:hover {
   transform: scale(1.2);
     text-shadow: 0 0 25px rgba(231, 157, 223, 0.8);
 }
-
-/* Add to existing card styles */
 .card .media {
   cursor: pointer;
   transition: transform 0.3s ease;
 }
-
 .card .media:hover {
   transform: scale(1.03);
 }
-
 
 @keyframes fadeInUp {
   from {
@@ -937,11 +914,12 @@ button.active {
   }
   
   .modal-header {
-    font-size: 18px;
+    font-size: 2rem;
+    margin-top: 70px;
   }
 
   .talk li {
-    font-size: 12px;
+    font-size: 20px;
   }
 }
 
@@ -1009,6 +987,212 @@ button.active {
     padding: 0.6rem 1.5rem;
     margin: 0.5rem;
     font-size: 1rem;
+  }
+}
+@media (hover: none) and (pointer: coarse) {
+  .skill-item::after {
+    opacity: 1;
+    bottom: -35px; /* Adjust position for better mobile visibility */
+    font-size: 0.8rem; /* Slightly smaller text for mobile */
+  }
+}
+@media (max-width: 480px) {
+  .modalA {
+    border-radius: 8px; /* Smaller border radius */
+    box-shadow: 3px 3px 50px #07070e; /* Reduced shadow for mobile */
+  }
+
+  .panels-container {
+    display: flex; /* Change to flex for single column layout */
+    flex-direction:column-reverse; /* Stack panels vertically */
+    padding: 20px; /* Reduced padding */
+  }
+
+  .content-panel {
+    padding-right: 0; /* Remove right padding */
+    border-right: none; /* Remove border */
+    margin-bottom: 20px; /* Add margin for spacing */
+    display: flex;
+    justify-content: center;
+  }
+
+  .nav-panel {
+    padding-left: 0; /* Remove left padding */
+    justify-content: center; /* Center nav items */
+  }
+
+
+  .subtext {
+    font-size: 1rem; /* Smaller font size for mobile */
+    margin-top: 5px; /* Reduced margin */
+  }
+
+  .card-container {
+    padding: 1rem; /* Reduced padding */
+    gap: 1rem; /* Reduced gap */
+  }
+
+  .card {
+    width: 90%; /* Full width for cards */
+    margin: 0 auto; /* Center cards */
+    flex: none; /* Remove flex properties */
+    padding: 10px; /* Add padding for content */
+  }
+
+  .carousel-container {
+    padding: 0 10px; /* Add padding for carousel */
+  }
+
+  .carousel-track {
+    flex-direction: column; /* Stack items vertically */
+  }
+  .video-cards{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+  .prev {
+    display: none;
+    pointer-events: none;
+  }
+  .next {
+    display: none;
+    pointer-events: none;
+  }
+  #lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 100000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    overscroll-behavior: contain;
+    touch-action: none; /* Disable all touch gestures */
+  }
+  
+  #lightbox.active {
+    display: flex;
+  }
+  
+  /* Lock body scroll */
+  #lightbox.active ~ * {
+    overflow: hidden !important;
+    height: 100% !important;
+    position: fixed !important;
+    width: 100% !important;
+  }
+  
+  /* Content styling */
+  .lightbox-content {
+    max-width: 100%;
+    max-height: 100vh;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #lightbox-image,
+  #lightbox-video {
+    max-width: 100vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 4px;
+    pointer-events: none; /* Prevent any interaction with content */
+  }
+  .A p{
+    font-size: 2rem;
+    
+  }
+  .B p{
+    font-size: 2rem;
+  }
+  #Ha {
+    font-size: 2rem;
+    margin-top: 10px;
+  }
+  .modal-content{
+    padding:10px;
+  }
+  .container {
+    flex-direction: row; /* Stack items vertically */
+    justify-content: flex-start; /* Align items to the start */
+    align-items: center; /* Center items */
+    max-height: 70vh; /* Limit the height of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px; /* Add some padding for better spacing */
+    gap: 5px; /* Reduce gap between items */
+  }
+}
+@media (min-width: 481px) and (max-width: 667px) {
+  .modalA {
+    border-radius: 10px;
+    box-shadow: 3px 3px 60px #07070e;
+  }
+
+  .panels-container {
+    padding: 25px;
+  }
+
+  .card {
+    max-width: 90%;
+    margin: 0.75rem auto;
+    padding: 15px;
+  }
+
+  .media {
+    height: 250px;
+  }
+
+  button {
+    padding: 0.7rem 1.75rem;
+    margin: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .subtext {
+    font-size: 1.1rem;
+    margin-top: 8px;
+  }
+
+  .modal-header {
+    font-size: 2.2rem;
+    margin-top: 80px;
+  }
+
+  .talk li {
+    font-size: 22px;
+    margin: 12px 0;
+  }
+
+  .carousel-container {
+    padding: 0 15px;
+  }
+
+  .video-cards {
+    gap: 15px;
+  }
+
+  #lightbox-image,
+  #lightbox-video {
+    max-height: 75vh;
+  }
+
+  .container {
+    gap: 8px;
+    padding: 15px;
+  }
+
+  .skill-item::after {
+    bottom: -30px;
+    font-size: 0.9rem;
   }
 }
 /* #endregion */

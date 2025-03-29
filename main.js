@@ -172,9 +172,6 @@ action.play();
       
 //#region HTML ANIMATIONS
 function showModal(modal) {
-  if (!modal) return;
-  canvas.style.pointerEvents = 'none';
-    modal.style.pointerEvents = "auto";
   // Clear existing timeouts and animations
   if (modalTimeout) clearTimeout(modalTimeout);
   gsap.killTweensOf(modal);
@@ -194,7 +191,6 @@ function showModal(modal) {
         ease: "expo.out",
         onStart: () => {
           modal.style.display = 'block';
-          modal.style.pointerEvents = "auto";
         }
       });
   
@@ -236,6 +232,7 @@ function showModal(modal) {
   }, 500); 
   currentModal = modal;    
 }
+
 document.addEventListener('DOMContentLoaded', function() {
   // Generic function for all icons
   function setupIconAnimation(selector) {
@@ -284,7 +281,141 @@ document.querySelectorAll('.talk li').forEach(item => {
     target.classList.add('active');
   });
 });
+//#region Cexperience
+document.addEventListener('DOMContentLoaded', () => {
+  // Lightbox Elements
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImage = document.getElementById('lightbox-image');
+  const lightboxVideo = document.getElementById('lightbox-video');
+  const closeBtn = document.querySelector('.close-btn');
 
+  // Media Click Handler
+  document.querySelectorAll('.media').forEach(media => {
+      media.addEventListener('click', (e) => {
+          e.preventDefault();
+          lightboxImage.style.display = 'none';
+      lightboxVideo.style.display = 'none';
+      lightboxVideo.pause();
+      lightboxVideo.currentTime = 0;
+      lightboxVideo.innerHTML = ''; // Clear previous video source
+          
+          if (media.tagName === 'IMG') {
+              // Handle Image Click
+              console.log('Image clicked:', media.src);
+              lightboxImage.src = media.src;
+              lightboxImage.style.display = 'block';
+              lightboxVideo.style.display = 'none';
+              lightbox.classList.add('active');
+              
+          } else if (media.tagName === 'VIDEO') {
+              // Handle Video Click
+              const videoWrapper = media.closest('.video-wrapper');
+const videoSource = videoWrapper.querySelector('source').src;
+lightboxVideo.innerHTML = `<source src="${videoSource}" type="video/mp4">`;
+lightboxVideo.load();
+              
+              lightboxVideo.style.display = 'block';
+              lightboxImage.style.display = 'none';
+              lightbox.classList.add('active');
+              
+              lightboxVideo.controls = true;
+              lightboxVideo.muted = true;
+              lightboxVideo.play().catch((error) => {
+                  console.log('Autoplay blocked:', error);
+                  lightboxVideo.controls = true;
+              });
+          }
+      });
+  });
+
+  // Close Lightbox
+  function closeLightbox() {
+      lightbox.classList.remove('active');
+      lightboxVideo.pause();
+      lightboxVideo.currentTime = 0;
+      lightboxVideo.controls = false;
+      lightboxVideo.muted = false;
+      console.log('Lightbox closed');
+  }
+
+  // Event Listeners
+  closeBtn.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+      if(e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeLightbox();
+  });
+
+  // Tab Switching
+  const videoCards = document.querySelector('.video-cards');
+  const imageCards = document.querySelector('.image-cards');
+  const showVideosButton = document.getElementById('show-videos');
+  const showImagesButton = document.getElementById('show-images');
+
+  function showVideos() {
+      videoCards.style.display = 'flex';
+      imageCards.style.display = 'none';
+      console.log('Showing videos');
+  }
+
+  function showImages() {
+      imageCards.style.display = 'flex';
+      videoCards.style.display = 'none';
+      console.log('Showing images');
+  }
+
+  showVideosButton.addEventListener('click', showVideos);
+  showImagesButton.addEventListener('click', showImages);
+
+  // Initialize
+  showVideos();
+});
+
+const track = document.querySelector('.carousel-track');
+const cards = document.querySelectorAll('.card');
+const nextBtn = document.querySelector('.next');
+const prevBtn = document.querySelector('.prev');
+const visibleCards = 2; // Number of cards visible at a time
+let currentIndex = 0;
+
+// Calculate the width of a single card including margin
+const cardWidth = cards[0].offsetWidth + 20; // 200px width + 20px margin
+
+// Update the carousel position
+function updateCarousel(animate = true) {
+  track.style.transition = animate ? 'transform 0.5s ease-in-out' : 'none';
+  
+  // Move by two cards (multiply by 2 for two cards)
+  track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+}
+
+// Handle navigation (next/prev buttons)
+function handleNavigation(direction) {
+  if (isAnimating) return;
+  isAnimating = true;
+
+  currentIndex += direction * visibleCards; // Move by two cards (multiply by visibleCards)
+
+  // Loop the carousel when we reach the end or start
+  if (currentIndex >= cards.length) {
+      setTimeout(() => {
+          track.style.transition = 'none';
+          currentIndex = 0; // Reset to the first card
+          updateCarousel(false); // No animation for resetting
+      }, 500);
+  } else if (currentIndex < 0) {
+      currentIndex = cards.length - visibleCards;
+  }
+
+  updateCarousel(); // Update the carousel position with animation
+  setTimeout(() => isAnimating = false, 500); // Allow animation to finish
+}
+
+// Button event listeners
+nextBtn.addEventListener('click', () => handleNavigation(1));
+prevBtn.addEventListener('click', () => handleNavigation(-1));
+//#endregion
 //#endregion
       
 //#region zoom animation
@@ -510,6 +641,7 @@ function onMouseMove( event ) {
       }
 }
 
+
 function onClick() {
   if (!interactionEnabled || isAnimating || currentTarget) return;
 
@@ -530,9 +662,39 @@ window.addEventListener( 'click', onClick );
 window.addEventListener( 'mousemove', onMouseMove );
 
 
+
 //mobile responsive
 let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 let controls = null
+function onTouchStart(event) {
+  if (!interactionEnabled || isAnimating || currentTarget) return;
+
+  const touch = event.touches[0]; 
+  if (!touch) return; // Prevent errors if no touch event
+
+  mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+
+  onClick(); // Calls the same function used for mouse clicks
+}
+
+function onTouchMove(event) {
+  if (!controls || !isMobile || event.touches.length === 0) return;
+
+  const touch = event.touches[0];
+  if (!touch) return; // Prevent errors
+
+  mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+
+  onMouseMove(touch); // Pass touch data to avoid `undefined` errors
+}
+
+// Add event listeners for mobile without affecting desktop
+if (isMobile) {
+  window.addEventListener("touchstart", onTouchStart, { passive: true });
+  window.addEventListener("touchmove", onTouchMove, { passive: true });
+}
 
 //controls for mobille
 function mobileControls (){

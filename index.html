@@ -88,19 +88,19 @@
             <div class="carousel-container">
               <div class="image-cards carousel-track">
                 <div class="card">
-                  <img class="media" src="MUN/1.png" alt="Image 1" loading="lazy">
+                  <img class="media" src="MUN/1.png" alt="Image 1">
                   <div class="subtitle">The Conference Logo</div>
                 </div>
                 <div class="card">
-                  <img class="media" src="MUN/2.jpg" alt="Image 2" loading="lazy">
+                  <img class="media" src="MUN/2.jpg" alt="Image 2">
                   <div class="subtitle">A 8ft &times; 4ft Banner</div>
                 </div>
                 <div class="card">
-                  <img class="media" src="MUN/3.jpg" alt="Image 3" loading="lazy">
+                  <img class="media" src="MUN/3.jpg" alt="Image 3">
                   <div class="subtitle">Participation Certifecate</div>
                 </div>
                 <div class="card">
-                  <img class="media" src="MUN/4.jpg" alt="Image 4" loading="lazy">
+                  <img class="media" src="MUN/4.jpg" alt="Image 4">
                   <div class="subtitle">Rollup</div>
                 </div>
                 <!-- Add more cards as needed -->
@@ -114,151 +114,6 @@
         <button class="EXP" id="show-videos">Show Videos</button>
         <button class="EXP" id="show-images">Show Images</button>
       </div>
-       <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Lightbox Elements
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImage = document.getElementById('lightbox-image');
-    const lightboxVideo = document.getElementById('lightbox-video');
-    const closeBtn = document.querySelector('.close-btn');
-
-    // Media Click Handler
-    document.querySelectorAll('.media').forEach(media => {
-        media.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            if (media.tagName === 'IMG') {
-                // Handle Image Click
-                console.log('Image clicked:', media.src);
-                lightboxImage.src = media.src;
-                lightboxImage.style.display = 'block';
-                lightboxVideo.style.display = 'none';
-                lightbox.classList.add('active');
-                
-            } else if (media.tagName === 'VIDEO') {
-                // Handle Video Click
-                console.log('Video clicked');
-                const videoSource = media.querySelector('source').src;
-                lightboxVideo.querySelector('source').src = videoSource;
-                lightboxVideo.load();
-                
-                lightboxVideo.style.display = 'block';
-                lightboxImage.style.display = 'none';
-                lightbox.classList.add('active');
-                
-                lightboxVideo.controls = true;
-                lightboxVideo.muted = true;
-                lightboxVideo.play().catch((error) => {
-                    console.log('Autoplay blocked:', error);
-                    lightboxVideo.controls = true;
-                });
-            }
-        });
-    });
-
-    // Close Lightbox
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        lightboxVideo.pause();
-        lightboxVideo.currentTime = 0;
-        lightboxVideo.controls = false;
-        lightboxVideo.muted = false;
-        console.log('Lightbox closed');
-    }
-
-    // Event Listeners
-    closeBtn.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', (e) => {
-        if(e.target === lightbox) closeLightbox();
-    });
-    document.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape') closeLightbox();
-    });
-
-    // Tab Switching
-    const videoCards = document.querySelector('.video-cards');
-    const imageCards = document.querySelector('.image-cards');
-    const showVideosButton = document.getElementById('show-videos');
-    const showImagesButton = document.getElementById('show-images');
-
-    function showVideos() {
-        videoCards.style.display = 'flex';
-        imageCards.style.display = 'none';
-        console.log('Showing videos');
-    }
-
-    function showImages() {
-        imageCards.style.display = 'flex';
-        videoCards.style.display = 'none';
-        console.log('Showing images');
-    }
-
-    showVideosButton.addEventListener('click', showVideos);
-    showImagesButton.addEventListener('click', showImages);
-
-    // Initialize
-    showVideos();
-});
-const track = document.querySelector('.carousel-track');
-const cards = document.querySelectorAll('.card');
-const nextButton = document.querySelector('.next');
-const prevButton = document.querySelector('.prev');
-const cardCount = cards.length;
-let isAnimating = false;
-const animationDuration = 500;
-let currentIndex = 0;
-
-function updateCarousel() {
-  track.style.transform = `translate3d(${currentIndex * -50}%, 0, 0)`; // Use 3D transform
-}
-
-function handleNext() {
-  if (isAnimating) return;
-  isAnimating = true;
-  currentIndex = (currentIndex + 1) % Math.ceil(cardCount / 2);
-  updateCarousel();
-  setTimeout(() => isAnimating = false, animationDuration);
-}
-
-function handlePrev() {
-  if (isAnimating) return;
-  isAnimating = true;
-  currentIndex = (currentIndex - 1 + Math.ceil(cardCount / 2)) % Math.ceil(cardCount / 2);
-  updateCarousel();
-  setTimeout(() => isAnimating = false, animationDuration);
-}
-
-const throttle = (fn, wait) => {
-  let lastCall = 0;
-  return (...args) => {
-    const now = Date.now();
-    if (now - lastCall < wait) return;
-    lastCall = now;
-    return fn(...args);
-  };
-};
-
-
-nextButton.addEventListener('click', handleNext);
-prevButton.addEventListener('click', handlePrev);
-document.querySelectorAll('.media').forEach(img => {
-  const src = img.getAttribute('src');
-  new Image().src = src; // Preload images
-});
-// Optional: Add infinite scroll illusion by cloning cards
-const cloneFirstCards = () => {
-  const firstTwo = Array.from(cards).slice(0, 2);
-  firstTwo.forEach(card => {
-    const clone = card.cloneNode(true);
-    track.appendChild(clone);
-  });
-};
-
-if (cardCount % 2 !== 0) {
-  cloneFirstCards();
-}
-
-</script>
         </div>
       </div>
     </div>
@@ -430,7 +285,7 @@ if (cardCount % 2 !== 0) {
         </g>
       </svg><img class="blob-image" src="NXGEN.png" alt="NXGEN" />
     </div>
-    <div class="modal-header"><a href="https://www.nxgen.io/en/">NXGEN Technology AG</a></div> 
+    <div class="modal-header" id="Ha"><a href="https://www.nxgen.io/en/">NXGEN Technology AG</a></div> 
       <h1 class="desc">Dec 2024 - February 2025</h1>
         <div class="box linkedin" href="https://www.linkedin.com/company/nxgen-technology-ag/posts/?feedView=all"
                 data-tooltip="Linkedin">
