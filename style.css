@@ -205,6 +205,10 @@ button, a, .clickable {
   color: #e79ddf;
   text-shadow: 0 0 8px rgba(231, 157, 223, 0.3);
 }
+.talk ul li:hover .modal-description {
+  color: #e79ddf;
+  text-shadow: 0 0 8px rgba(231, 157, 223, 0.3);
+}
 .talk ul li::before {
   content: "▹";
   position: absolute;
@@ -615,6 +619,19 @@ section.F { background: url('F.svg') no-repeat center / cover; }
 /* #endregion */
 
 /* #region Work */
+.content-panel p{
+  color: white;
+  font-size: 1.5rem;
+  word-wrap: break-word;  /* Ensures long words or URLs wrap properly */
+  white-space: normal;    /* Ensures line breaks happen as needed */
+  word-break: break-word;
+  text-align: center;
+  text-shadow: 0 5px 10px rgba(0,0,0,0.3);
+}
+.content-panel p:hover strong{
+  color: #e79ddf;
+  transition: all ease-in 0.3s;
+}
 .panels-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1193,6 +1210,19 @@ button.active {
   .skill-item::after {
     bottom: -30px;
     font-size: 0.9rem;
+  }
+  .modal-content{
+    
+    padding: 70px;
+  }
+  .content-panel p{
+    color: white;
+    font-size: .5rem;
+    word-wrap: break-word;  /* Ensures long words or URLs wrap properly */
+    white-space: normal;    /* Ensures line breaks happen as needed */
+    word-break: break-word;
+    text-align: center;
+    text-shadow: 0 5px 10px rgba(0,0,0,0.3);
   }
 }
 /* #endregion */

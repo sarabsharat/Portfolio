@@ -169,6 +169,12 @@ action.play();
 //#endregion    
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Hide all modals on page load
+  document.querySelectorAll("[id$='-modal']").forEach(modal => {
+      modal.style.display = "none";
+  });
+});
       
 //#region HTML ANIMATIONS
 function showModal(modal) {
@@ -420,10 +426,10 @@ prevBtn.addEventListener('click', () => handleNavigation(-1));
       
 //#region zoom animation
 function moveCameraTo(targetName) {
-      if(isAnimating) return;
-        
-      renderer.domElement.style.pointerEvents = 'none';
-       // Cancel any pending modal from previous clicks
+  if (isAnimating) return;
+
+  renderer.domElement.style.pointerEvents = 'none';
+  // Cancel any pending modal from previous clicks
   if (modalTimeout) clearTimeout(modalTimeout);
   currentModal = null;
 
@@ -433,67 +439,73 @@ function moveCameraTo(targetName) {
     gsap.killTweensOf(modal); // Stop any active animations
   });
 
-  // Start camera animation
-  // ... your existing camera code ...
-
-  // Queue modal appearance
+  // Ensure the modal ID matches the target name
   const modal = document.getElementById(`${targetName}-modal`);
-  showModal(modal);
+  if (!modal) {
+    console.warn(`No modal found for target: ${targetName}`);
+    return; // Exit if no modal is found
+  }
 
-      isAnimating = true;
-      currentTarget = targetName;
-    
-      const targetObject = intersectObjects.find(obj => obj.name === targetName);
-      targetObject.getWorldPosition(animationTargetPosition);
-      returnLookAtTarget.copy(animationTargetPosition);
+  showModal(modal); // Queue modal appearance
 
-      const startLookAt = new THREE.Vector3().copy(scene.position); 
-      const targetLookAt = animationTargetPosition.clone(); 
-      startPosition = camera.position.clone();
-    
-      const cameraDirection = new THREE.Vector3()
-          .subVectors(camera.position, animationTargetPosition)
-          .normalize();
-    
-      const targetPosition = cameraDirection
-          .multiplyScalar(MIN_DISTANCE)
-          .add(animationTargetPosition);
-    
-      const rotatedPosition = targetPosition.clone().applyAxisAngle(
-          new THREE.Vector3(0, Math.PI/2, 0),
-          THREE.MathUtils.degToRad(45 * ROTATION_SPEED)
-    );
-    
-    
-      new TWEEN.Tween({
-          posX: camera.position.x,
-          posY: camera.position.y,
-          posZ: camera.position.z,
-          lookX: startLookAt.x, 
-          lookY: startLookAt.y,
-          lookZ: startLookAt.z
-    })
-      .to({
-          posX: rotatedPosition.x,
-          posY: rotatedPosition.y,
-          posZ: rotatedPosition.z,
-          lookX: targetLookAt.x, 
-          lookY: targetLookAt.y,
-          lookZ: targetLookAt.z
+  isAnimating = true;
+  currentTarget = targetName;
+
+  const targetObject = intersectObjects.find(obj => obj.name === targetName);
+  if (!targetObject) {
+    console.warn(`No target object found for: ${targetName}`);
+    isAnimating = false;
+    return;
+  }
+
+  targetObject.getWorldPosition(animationTargetPosition);
+  returnLookAtTarget.copy(animationTargetPosition);
+
+  const startLookAt = new THREE.Vector3().copy(scene.position);
+  const targetLookAt = animationTargetPosition.clone();
+  startPosition = camera.position.clone();
+
+  const cameraDirection = new THREE.Vector3()
+    .subVectors(camera.position, animationTargetPosition)
+    .normalize();
+
+  const targetPosition = cameraDirection
+    .multiplyScalar(MIN_DISTANCE)
+    .add(animationTargetPosition);
+
+  const rotatedPosition = targetPosition.clone().applyAxisAngle(
+    new THREE.Vector3(0, Math.PI / 2, 0),
+    THREE.MathUtils.degToRad(45 * ROTATION_SPEED)
+  );
+
+  new TWEEN.Tween({
+    posX: camera.position.x,
+    posY: camera.position.y,
+    posZ: camera.position.z,
+    lookX: startLookAt.x,
+    lookY: startLookAt.y,
+    lookZ: startLookAt.z
+  })
+    .to({
+      posX: rotatedPosition.x,
+      posY: rotatedPosition.y,
+      posZ: rotatedPosition.z,
+      lookX: targetLookAt.x,
+      lookY: targetLookAt.y,
+      lookZ: targetLookAt.z
     }, 1500)
-      .easing(TWEEN.Easing.Quadratic.InOut)
-      .onUpdate((obj) => {
-          camera.position.set(obj.posX, obj.posY, obj.posZ);
-          camera.lookAt(new THREE.Vector3(obj.lookX, obj.lookY, obj.lookZ));
-       })
-       
-       .onComplete(() => {
-        isAnimating = false;
-        if(Rbutton) Rbutton.style.display = 'block';
-        interactionEnabled = true; // Re-enable after animation
-      })
-      .start();
-    }
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .onUpdate((obj) => {
+      camera.position.set(obj.posX, obj.posY, obj.posZ);
+      camera.lookAt(new THREE.Vector3(obj.lookX, obj.lookY, obj.lookZ));
+    })
+    .onComplete(() => {
+      isAnimating = false;
+      if (Rbutton) Rbutton.style.display = 'block';
+      interactionEnabled = true; // Re-enable after animation
+    })
+    .start();
+}
     
 
     
